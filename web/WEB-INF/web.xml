@@ -5,7 +5,7 @@
          version="3.1">
     <servlet>
         <servlet-name>TestServlet</servlet-name>
-        <servlet-class>com.tsystems.javaschool.ecare.TestServlet</servlet-class>
+        <servlet-class>com.tsystems.javaschool.ecare.servlets.TestServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>TestServlet</servlet-name>
