@@ -31,7 +31,7 @@ public class TestServlet extends javax.servlet.http.HttpServlet
         List<UsersEntity> users = em.createQuery("select u from UsersEntity u", UsersEntity.class).getResultList();
 
         for(UsersEntity u:users){
-            System.out.println(u);
+            out.println(u.getName());
         }
 
         em.close();

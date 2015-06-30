@@ -1,21 +1,26 @@
 package com.tsystems.javaschool.ecare.dao;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
- * Created by Kolia on 27.06.2015.
+ * Created by Kolia on 01.07.2015.
  */
 @Entity
-@Table(name = "options", schema = "", catalog = "com/tsystems/javaschool/ecare")
+@Table(name = "options", schema = "", catalog = "ecare")
 public class OptionsEntity
 {
     private int optionId;
     private String name;
     private int connectionPrice;
     private int monthlyPrice;
+    private Collection<AvailableOptionsEntity> availableOptionsesByOptionId;
+    private Collection<OptionLockingEntity> optionLockingsByOptionId;
+    private Collection<OptionLockingEntity> optionLockingsByOptionId_0;
+    private Collection<SelectedOptionsEntity> selectedOptionsesByOptionId;
 
     @Id
-    @Column(name = "option_id")
+    @Column(name = "option_id", nullable = false, insertable = true, updatable = true)
     public int getOptionId()
     {
         return optionId;
@@ -27,7 +32,7 @@ public class OptionsEntity
     }
 
     @Basic
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, insertable = true, updatable = true, length = 50)
     public String getName()
     {
         return name;
@@ -39,7 +44,7 @@ public class OptionsEntity
     }
 
     @Basic
-    @Column(name = "connection_price")
+    @Column(name = "connection_price", nullable = false, insertable = true, updatable = true)
     public int getConnectionPrice()
     {
         return connectionPrice;
@@ -51,7 +56,7 @@ public class OptionsEntity
     }
 
     @Basic
-    @Column(name = "monthly_price")
+    @Column(name = "monthly_price", nullable = false, insertable = true, updatable = true)
     public int getMonthlyPrice()
     {
         return monthlyPrice;
@@ -86,5 +91,49 @@ public class OptionsEntity
         result = 31 * result + connectionPrice;
         result = 31 * result + monthlyPrice;
         return result;
+    }
+
+    @OneToMany(mappedBy = "optionsByOptionId")
+    public Collection<AvailableOptionsEntity> getAvailableOptionsesByOptionId()
+    {
+        return availableOptionsesByOptionId;
+    }
+
+    public void setAvailableOptionsesByOptionId(Collection<AvailableOptionsEntity> availableOptionsesByOptionId)
+    {
+        this.availableOptionsesByOptionId = availableOptionsesByOptionId;
+    }
+
+    @OneToMany(mappedBy = "optionsBySelectedOptionId")
+    public Collection<OptionLockingEntity> getOptionLockingsByOptionId()
+    {
+        return optionLockingsByOptionId;
+    }
+
+    public void setOptionLockingsByOptionId(Collection<OptionLockingEntity> optionLockingsByOptionId)
+    {
+        this.optionLockingsByOptionId = optionLockingsByOptionId;
+    }
+
+    @OneToMany(mappedBy = "optionsByLockedOptionId")
+    public Collection<OptionLockingEntity> getOptionLockingsByOptionId_0()
+    {
+        return optionLockingsByOptionId_0;
+    }
+
+    public void setOptionLockingsByOptionId_0(Collection<OptionLockingEntity> optionLockingsByOptionId_0)
+    {
+        this.optionLockingsByOptionId_0 = optionLockingsByOptionId_0;
+    }
+
+    @OneToMany(mappedBy = "optionsByOptionId")
+    public Collection<SelectedOptionsEntity> getSelectedOptionsesByOptionId()
+    {
+        return selectedOptionsesByOptionId;
+    }
+
+    public void setSelectedOptionsesByOptionId(Collection<SelectedOptionsEntity> selectedOptionsesByOptionId)
+    {
+        this.selectedOptionsesByOptionId = selectedOptionsesByOptionId;
     }
 }

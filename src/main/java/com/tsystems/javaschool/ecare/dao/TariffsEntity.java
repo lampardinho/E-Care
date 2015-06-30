@@ -1,20 +1,23 @@
 package com.tsystems.javaschool.ecare.dao;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
- * Created by Kolia on 27.06.2015.
+ * Created by Kolia on 01.07.2015.
  */
 @Entity
-@Table(name = "tariffs", schema = "", catalog = "com/tsystems/javaschool/ecare")
+@Table(name = "tariffs", schema = "", catalog = "ecare")
 public class TariffsEntity
 {
     private int tariffId;
     private String name;
     private int price;
+    private Collection<AvailableOptionsEntity> availableOptionsesByTariffId;
+    private Collection<ContractsEntity> contractsesByTariffId;
 
     @Id
-    @Column(name = "tariff_id")
+    @Column(name = "tariff_id", nullable = false, insertable = true, updatable = true)
     public int getTariffId()
     {
         return tariffId;
@@ -26,7 +29,7 @@ public class TariffsEntity
     }
 
     @Basic
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, insertable = true, updatable = true, length = 50)
     public String getName()
     {
         return name;
@@ -38,7 +41,7 @@ public class TariffsEntity
     }
 
     @Basic
-    @Column(name = "price")
+    @Column(name = "price", nullable = false, insertable = true, updatable = true)
     public int getPrice()
     {
         return price;
@@ -71,5 +74,27 @@ public class TariffsEntity
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + price;
         return result;
+    }
+
+    @OneToMany(mappedBy = "tariffsByTariffId")
+    public Collection<AvailableOptionsEntity> getAvailableOptionsesByTariffId()
+    {
+        return availableOptionsesByTariffId;
+    }
+
+    public void setAvailableOptionsesByTariffId(Collection<AvailableOptionsEntity> availableOptionsesByTariffId)
+    {
+        this.availableOptionsesByTariffId = availableOptionsesByTariffId;
+    }
+
+    @OneToMany(mappedBy = "tariffsByTariffId")
+    public Collection<ContractsEntity> getContractsesByTariffId()
+    {
+        return contractsesByTariffId;
+    }
+
+    public void setContractsesByTariffId(Collection<ContractsEntity> contractsesByTariffId)
+    {
+        this.contractsesByTariffId = contractsesByTariffId;
     }
 }

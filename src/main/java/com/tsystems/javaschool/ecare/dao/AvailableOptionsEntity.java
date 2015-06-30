@@ -3,18 +3,20 @@ package com.tsystems.javaschool.ecare.dao;
 import javax.persistence.*;
 
 /**
- * Created by Kolia on 27.06.2015.
+ * Created by Kolia on 01.07.2015.
  */
 @Entity
-@Table(name = "available_options", schema = "", catalog = "com/tsystems/javaschool/ecare")
+@Table(name = "available_options", schema = "", catalog = "ecare")
 public class AvailableOptionsEntity
 {
     private int id;
     private int tariffId;
     private int optionId;
+    private TariffsEntity tariffsByTariffId;
+    private OptionsEntity optionsByOptionId;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, insertable = true, updatable = true)
     public int getId()
     {
         return id;
@@ -26,7 +28,7 @@ public class AvailableOptionsEntity
     }
 
     @Basic
-    @Column(name = "tariff_id")
+    @Column(name = "tariff_id", nullable = false, insertable = true, updatable = true)
     public int getTariffId()
     {
         return tariffId;
@@ -38,7 +40,7 @@ public class AvailableOptionsEntity
     }
 
     @Basic
-    @Column(name = "option_id")
+    @Column(name = "option_id", nullable = false, insertable = true, updatable = true)
     public int getOptionId()
     {
         return optionId;
@@ -71,5 +73,29 @@ public class AvailableOptionsEntity
         result = 31 * result + tariffId;
         result = 31 * result + optionId;
         return result;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "tariff_id", referencedColumnName = "tariff_id", nullable = false)
+    public TariffsEntity getTariffsByTariffId()
+    {
+        return tariffsByTariffId;
+    }
+
+    public void setTariffsByTariffId(TariffsEntity tariffsByTariffId)
+    {
+        this.tariffsByTariffId = tariffsByTariffId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "option_id", referencedColumnName = "option_id", nullable = false)
+    public OptionsEntity getOptionsByOptionId()
+    {
+        return optionsByOptionId;
+    }
+
+    public void setOptionsByOptionId(OptionsEntity optionsByOptionId)
+    {
+        this.optionsByOptionId = optionsByOptionId;
     }
 }

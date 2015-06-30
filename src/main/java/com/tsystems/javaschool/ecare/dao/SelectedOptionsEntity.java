@@ -3,18 +3,20 @@ package com.tsystems.javaschool.ecare.dao;
 import javax.persistence.*;
 
 /**
- * Created by Kolia on 27.06.2015.
+ * Created by Kolia on 01.07.2015.
  */
 @Entity
-@Table(name = "selected_options", schema = "", catalog = "com/tsystems/javaschool/ecare")
+@Table(name = "selected_options", schema = "", catalog = "ecare")
 public class SelectedOptionsEntity
 {
     private int id;
     private int optionId;
     private int contractId;
+    private OptionsEntity optionsByOptionId;
+    private ContractsEntity contractsByContractId;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, insertable = true, updatable = true)
     public int getId()
     {
         return id;
@@ -26,7 +28,7 @@ public class SelectedOptionsEntity
     }
 
     @Basic
-    @Column(name = "option_id")
+    @Column(name = "option_id", nullable = false, insertable = true, updatable = true)
     public int getOptionId()
     {
         return optionId;
@@ -38,7 +40,7 @@ public class SelectedOptionsEntity
     }
 
     @Basic
-    @Column(name = "contract_id")
+    @Column(name = "contract_id", nullable = false, insertable = true, updatable = true)
     public int getContractId()
     {
         return contractId;
@@ -71,5 +73,29 @@ public class SelectedOptionsEntity
         result = 31 * result + optionId;
         result = 31 * result + contractId;
         return result;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "option_id", referencedColumnName = "option_id", nullable = false)
+    public OptionsEntity getOptionsByOptionId()
+    {
+        return optionsByOptionId;
+    }
+
+    public void setOptionsByOptionId(OptionsEntity optionsByOptionId)
+    {
+        this.optionsByOptionId = optionsByOptionId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "contract_id", referencedColumnName = "contract_id", nullable = false)
+    public ContractsEntity getContractsByContractId()
+    {
+        return contractsByContractId;
+    }
+
+    public void setContractsByContractId(ContractsEntity contractsByContractId)
+    {
+        this.contractsByContractId = contractsByContractId;
     }
 }

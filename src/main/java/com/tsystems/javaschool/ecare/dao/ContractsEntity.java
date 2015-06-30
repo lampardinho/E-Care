@@ -1,20 +1,25 @@
 package com.tsystems.javaschool.ecare.dao;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
- * Created by Kolia on 27.06.2015.
+ * Created by Kolia on 01.07.2015.
  */
 @Entity
-@Table(name = "contracts", schema = "", catalog = "com/tsystems/javaschool/ecare")
+@Table(name = "contracts", schema = "", catalog = "ecare")
 public class ContractsEntity
 {
     private int contractId;
     private int userId;
     private int tariffId;
+    private Collection<ContractLockingEntity> contractLockingsByContractId;
+    private UsersEntity usersByUserId;
+    private TariffsEntity tariffsByTariffId;
+    private Collection<SelectedOptionsEntity> selectedOptionsesByContractId;
 
     @Id
-    @Column(name = "contract_id")
+    @Column(name = "contract_id", nullable = false, insertable = true, updatable = true)
     public int getContractId()
     {
         return contractId;
@@ -26,7 +31,7 @@ public class ContractsEntity
     }
 
     @Basic
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
     public int getUserId()
     {
         return userId;
@@ -38,7 +43,7 @@ public class ContractsEntity
     }
 
     @Basic
-    @Column(name = "tariff_id")
+    @Column(name = "tariff_id", nullable = false, insertable = true, updatable = true)
     public int getTariffId()
     {
         return tariffId;
@@ -71,5 +76,51 @@ public class ContractsEntity
         result = 31 * result + userId;
         result = 31 * result + tariffId;
         return result;
+    }
+
+    @OneToMany(mappedBy = "contractsByContractId")
+    public Collection<ContractLockingEntity> getContractLockingsByContractId()
+    {
+        return contractLockingsByContractId;
+    }
+
+    public void setContractLockingsByContractId(Collection<ContractLockingEntity> contractLockingsByContractId)
+    {
+        this.contractLockingsByContractId = contractLockingsByContractId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    public UsersEntity getUsersByUserId()
+    {
+        return usersByUserId;
+    }
+
+    public void setUsersByUserId(UsersEntity usersByUserId)
+    {
+        this.usersByUserId = usersByUserId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "tariff_id", referencedColumnName = "tariff_id", nullable = false)
+    public TariffsEntity getTariffsByTariffId()
+    {
+        return tariffsByTariffId;
+    }
+
+    public void setTariffsByTariffId(TariffsEntity tariffsByTariffId)
+    {
+        this.tariffsByTariffId = tariffsByTariffId;
+    }
+
+    @OneToMany(mappedBy = "contractsByContractId")
+    public Collection<SelectedOptionsEntity> getSelectedOptionsesByContractId()
+    {
+        return selectedOptionsesByContractId;
+    }
+
+    public void setSelectedOptionsesByContractId(Collection<SelectedOptionsEntity> selectedOptionsesByContractId)
+    {
+        this.selectedOptionsesByContractId = selectedOptionsesByContractId;
     }
 }

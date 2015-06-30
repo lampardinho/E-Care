@@ -3,18 +3,20 @@ package com.tsystems.javaschool.ecare.dao;
 import javax.persistence.*;
 
 /**
- * Created by Kolia on 27.06.2015.
+ * Created by Kolia on 01.07.2015.
  */
 @Entity
-@Table(name = "contract_locking", schema = "", catalog = "com/tsystems/javaschool/ecare")
+@Table(name = "contract_locking", schema = "", catalog = "ecare")
 public class ContractLockingEntity
 {
     private int id;
     private int contractId;
     private int lockerId;
+    private ContractsEntity contractsByContractId;
+    private UsersEntity usersByLockerId;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, insertable = true, updatable = true)
     public int getId()
     {
         return id;
@@ -26,7 +28,7 @@ public class ContractLockingEntity
     }
 
     @Basic
-    @Column(name = "contract_id")
+    @Column(name = "contract_id", nullable = false, insertable = true, updatable = true)
     public int getContractId()
     {
         return contractId;
@@ -38,7 +40,7 @@ public class ContractLockingEntity
     }
 
     @Basic
-    @Column(name = "locker_id")
+    @Column(name = "locker_id", nullable = false, insertable = true, updatable = true)
     public int getLockerId()
     {
         return lockerId;
@@ -71,5 +73,29 @@ public class ContractLockingEntity
         result = 31 * result + contractId;
         result = 31 * result + lockerId;
         return result;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "contract_id", referencedColumnName = "contract_id", nullable = false)
+    public ContractsEntity getContractsByContractId()
+    {
+        return contractsByContractId;
+    }
+
+    public void setContractsByContractId(ContractsEntity contractsByContractId)
+    {
+        this.contractsByContractId = contractsByContractId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "locker_id", referencedColumnName = "user_id", nullable = false)
+    public UsersEntity getUsersByLockerId()
+    {
+        return usersByLockerId;
+    }
+
+    public void setUsersByLockerId(UsersEntity usersByLockerId)
+    {
+        this.usersByLockerId = usersByLockerId;
     }
 }

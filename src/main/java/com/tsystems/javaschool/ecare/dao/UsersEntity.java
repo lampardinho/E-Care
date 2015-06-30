@@ -2,12 +2,13 @@ package com.tsystems.javaschool.ecare.dao;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Collection;
 
 /**
  * Created by Kolia on 27.06.2015.
  */
 @Entity
-@Table(name = "users", schema = "", catalog = "com/tsystems/javaschool/ecare")
+@Table(name = "users", schema = "", catalog = "ecare")
 public class UsersEntity
 {
     private int userId;
@@ -19,9 +20,11 @@ public class UsersEntity
     private String email;
     private String password;
     private byte isAdmin;
+    private Collection<ContractLockingEntity> contractLockingsByUserId;
+    private Collection<ContractsEntity> contractsesByUserId;
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
     public int getUserId()
     {
         return userId;
@@ -33,7 +36,7 @@ public class UsersEntity
     }
 
     @Basic
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, insertable = true, updatable = true, length = 50)
     public String getName()
     {
         return name;
@@ -45,7 +48,7 @@ public class UsersEntity
     }
 
     @Basic
-    @Column(name = "surname")
+    @Column(name = "surname", nullable = false, insertable = true, updatable = true, length = 50)
     public String getSurname()
     {
         return surname;
@@ -57,7 +60,7 @@ public class UsersEntity
     }
 
     @Basic
-    @Column(name = "birth_date")
+    @Column(name = "birth_date", nullable = false, insertable = true, updatable = true)
     public Date getBirthDate()
     {
         return birthDate;
@@ -69,7 +72,7 @@ public class UsersEntity
     }
 
     @Basic
-    @Column(name = "passport_data")
+    @Column(name = "passport_data", nullable = false, insertable = true, updatable = true, length = 50)
     public String getPassportData()
     {
         return passportData;
@@ -81,7 +84,7 @@ public class UsersEntity
     }
 
     @Basic
-    @Column(name = "adress")
+    @Column(name = "adress", nullable = false, insertable = true, updatable = true, length = 50)
     public String getAdress()
     {
         return adress;
@@ -93,7 +96,7 @@ public class UsersEntity
     }
 
     @Basic
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, insertable = true, updatable = true, length = 50)
     public String getEmail()
     {
         return email;
@@ -105,7 +108,7 @@ public class UsersEntity
     }
 
     @Basic
-    @Column(name = "password")
+    @Column(name = "password", nullable = false, insertable = true, updatable = true, length = 50)
     public String getPassword()
     {
         return password;
@@ -117,7 +120,7 @@ public class UsersEntity
     }
 
     @Basic
-    @Column(name = "is_admin")
+    @Column(name = "is_admin", nullable = false, insertable = true, updatable = true)
     public byte getIsAdmin()
     {
         return isAdmin;
@@ -162,5 +165,27 @@ public class UsersEntity
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (int) isAdmin;
         return result;
+    }
+
+    @OneToMany(mappedBy = "usersByLockerId")
+    public Collection<ContractLockingEntity> getContractLockingsByUserId()
+    {
+        return contractLockingsByUserId;
+    }
+
+    public void setContractLockingsByUserId(Collection<ContractLockingEntity> contractLockingsByUserId)
+    {
+        this.contractLockingsByUserId = contractLockingsByUserId;
+    }
+
+    @OneToMany(mappedBy = "usersByUserId")
+    public Collection<ContractsEntity> getContractsesByUserId()
+    {
+        return contractsesByUserId;
+    }
+
+    public void setContractsesByUserId(Collection<ContractsEntity> contractsesByUserId)
+    {
+        this.contractsesByUserId = contractsesByUserId;
     }
 }
