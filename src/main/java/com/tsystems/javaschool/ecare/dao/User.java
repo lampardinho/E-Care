@@ -9,22 +9,50 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "users", schema = "", catalog = "ecare")
-public class UsersEntity
+public class User
 {
-    private int userId;
-    private String name;
-    private String surname;
-    private Date birthDate;
-    private String passportData;
-    private String adress;
-    private String email;
-    private String password;
-    private byte isAdmin;
-    private Collection<ContractLockingEntity> contractLockingsByUserId;
-    private Collection<ContractsEntity> contractsesByUserId;
-
     @Id
     @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
+    private int userId;
+
+    @Basic
+    @Column(name = "name", nullable = false, insertable = true, updatable = true, length = 50)
+    private String name;
+
+    @Basic
+    @Column(name = "surname", nullable = false, insertable = true, updatable = true, length = 50)
+    private String surname;
+
+    @Basic
+    @Column(name = "birth_date", nullable = false, insertable = true, updatable = true)
+    private Date birthDate;
+
+    @Basic
+    @Column(name = "passport_data", nullable = false, insertable = true, updatable = true, length = 50)
+    private String passportData;
+
+    @Basic
+    @Column(name = "address", nullable = false, insertable = true, updatable = true, length = 50)
+    private String address;
+
+    @Basic
+    @Column(name = "email", nullable = false, insertable = true, updatable = true, length = 50)
+    private String email;
+
+    @Basic
+    @Column(name = "password", nullable = false, insertable = true, updatable = true, length = 50)
+    private String password;
+
+    @Basic
+    @Column(name = "is_admin", nullable = false, insertable = true, updatable = true)
+    private byte isAdmin;
+
+    @ManyToMany
+    @JoinTable(name="contract_locking",
+            joinColumns=@JoinColumn(name="locker_id"),
+            inverseJoinColumns=@JoinColumn(name="contract_id"))
+    private Collection<Contract> lockedContracts;
+
     public int getUserId()
     {
         return userId;
@@ -35,8 +63,7 @@ public class UsersEntity
         this.userId = userId;
     }
 
-    @Basic
-    @Column(name = "name", nullable = false, insertable = true, updatable = true, length = 50)
+
     public String getName()
     {
         return name;
@@ -47,8 +74,7 @@ public class UsersEntity
         this.name = name;
     }
 
-    @Basic
-    @Column(name = "surname", nullable = false, insertable = true, updatable = true, length = 50)
+
     public String getSurname()
     {
         return surname;
@@ -59,8 +85,7 @@ public class UsersEntity
         this.surname = surname;
     }
 
-    @Basic
-    @Column(name = "birth_date", nullable = false, insertable = true, updatable = true)
+
     public Date getBirthDate()
     {
         return birthDate;
@@ -71,8 +96,7 @@ public class UsersEntity
         this.birthDate = birthDate;
     }
 
-    @Basic
-    @Column(name = "passport_data", nullable = false, insertable = true, updatable = true, length = 50)
+
     public String getPassportData()
     {
         return passportData;
@@ -83,20 +107,18 @@ public class UsersEntity
         this.passportData = passportData;
     }
 
-    @Basic
-    @Column(name = "adress", nullable = false, insertable = true, updatable = true, length = 50)
-    public String getAdress()
+
+    public String getAddress()
     {
-        return adress;
+        return address;
     }
 
-    public void setAdress(String adress)
+    public void setAddress(String address)
     {
-        this.adress = adress;
+        this.address = address;
     }
 
-    @Basic
-    @Column(name = "email", nullable = false, insertable = true, updatable = true, length = 50)
+
     public String getEmail()
     {
         return email;
@@ -107,8 +129,7 @@ public class UsersEntity
         this.email = email;
     }
 
-    @Basic
-    @Column(name = "password", nullable = false, insertable = true, updatable = true, length = 50)
+
     public String getPassword()
     {
         return password;
@@ -119,8 +140,7 @@ public class UsersEntity
         this.password = password;
     }
 
-    @Basic
-    @Column(name = "is_admin", nullable = false, insertable = true, updatable = true)
+
     public byte getIsAdmin()
     {
         return isAdmin;
@@ -131,17 +151,27 @@ public class UsersEntity
         this.isAdmin = isAdmin;
     }
 
+    public Collection<Contract> getLockedContracts()
+    {
+        return lockedContracts;
+    }
+
+    public void setLockedContracts(Collection<Contract> lockedContracts)
+    {
+        this.lockedContracts = lockedContracts;
+    }
+
     @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UsersEntity that = (UsersEntity) o;
+        User that = (User) o;
 
         if (isAdmin != that.isAdmin) return false;
         if (userId != that.userId) return false;
-        if (adress != null ? !adress.equals(that.adress) : that.adress != null) return false;
+        if (address != null ? !address.equals(that.address) : that.address != null) return false;
         if (birthDate != null ? !birthDate.equals(that.birthDate) : that.birthDate != null) return false;
         if (email != null ? !email.equals(that.email) : that.email != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
@@ -160,32 +190,13 @@ public class UsersEntity
         result = 31 * result + (surname != null ? surname.hashCode() : 0);
         result = 31 * result + (birthDate != null ? birthDate.hashCode() : 0);
         result = 31 * result + (passportData != null ? passportData.hashCode() : 0);
-        result = 31 * result + (adress != null ? adress.hashCode() : 0);
+        result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (int) isAdmin;
         return result;
     }
 
-    @OneToMany(mappedBy = "usersByLockerId")
-    public Collection<ContractLockingEntity> getContractLockingsByUserId()
-    {
-        return contractLockingsByUserId;
-    }
 
-    public void setContractLockingsByUserId(Collection<ContractLockingEntity> contractLockingsByUserId)
-    {
-        this.contractLockingsByUserId = contractLockingsByUserId;
-    }
 
-    @OneToMany(mappedBy = "usersByUserId")
-    public Collection<ContractsEntity> getContractsesByUserId()
-    {
-        return contractsesByUserId;
-    }
-
-    public void setContractsesByUserId(Collection<ContractsEntity> contractsesByUserId)
-    {
-        this.contractsesByUserId = contractsesByUserId;
-    }
 }

@@ -3,14 +3,10 @@
 
     <persistence-unit name="ecarePU">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>com.tsystems.javaschool.ecare.dao.UsersEntity</class>
-        <class>com.tsystems.javaschool.ecare.dao.AvailableOptionsEntity</class>
-        <class>com.tsystems.javaschool.ecare.dao.ContractLockingEntity</class>
-        <class>com.tsystems.javaschool.ecare.dao.ContractsEntity</class>
-        <class>com.tsystems.javaschool.ecare.dao.OptionLockingEntity</class>
-        <class>com.tsystems.javaschool.ecare.dao.OptionsEntity</class>
-        <class>com.tsystems.javaschool.ecare.dao.SelectedOptionsEntity</class>
-        <class>com.tsystems.javaschool.ecare.dao.TariffsEntity</class>
+        <class>com.tsystems.javaschool.ecare.dao.User</class>
+        <class>com.tsystems.javaschool.ecare.dao.Contract</class>
+        <class>com.tsystems.javaschool.ecare.dao.Option</class>
+        <class>com.tsystems.javaschool.ecare.dao.Tariff</class>
         <properties>
             <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/ecare"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>

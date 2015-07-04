@@ -8,16 +8,26 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "tariffs", schema = "", catalog = "ecare")
-public class TariffsEntity
+public class Tariff
 {
-    private int tariffId;
-    private String name;
-    private int price;
-    private Collection<AvailableOptionsEntity> availableOptionsesByTariffId;
-    private Collection<ContractsEntity> contractsesByTariffId;
-
     @Id
     @Column(name = "tariff_id", nullable = false, insertable = true, updatable = true)
+    private int tariffId;
+
+    @Basic
+    @Column(name = "name", nullable = false, insertable = true, updatable = true, length = 50)
+    private String name;
+
+    @Basic
+    @Column(name = "price", nullable = false, insertable = true, updatable = true)
+    private int price;
+
+    @ManyToMany
+    @JoinTable(name="available_options",
+            joinColumns=@JoinColumn(name="tariff_id"),
+            inverseJoinColumns=@JoinColumn(name="option_id"))
+    private Collection<Option> availableOptions;
+
     public int getTariffId()
     {
         return tariffId;
@@ -28,8 +38,7 @@ public class TariffsEntity
         this.tariffId = tariffId;
     }
 
-    @Basic
-    @Column(name = "name", nullable = false, insertable = true, updatable = true, length = 50)
+
     public String getName()
     {
         return name;
@@ -40,8 +49,7 @@ public class TariffsEntity
         this.name = name;
     }
 
-    @Basic
-    @Column(name = "price", nullable = false, insertable = true, updatable = true)
+
     public int getPrice()
     {
         return price;
@@ -52,13 +60,24 @@ public class TariffsEntity
         this.price = price;
     }
 
+
+    public Collection<Option> getAvailableOptions()
+    {
+        return availableOptions;
+    }
+
+    public void setAvailableOptions(Collection<Option> availableOptions)
+    {
+        this.availableOptions = availableOptions;
+    }
+
     @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TariffsEntity that = (TariffsEntity) o;
+        Tariff that = (Tariff) o;
 
         if (price != that.price) return false;
         if (tariffId != that.tariffId) return false;
@@ -74,27 +93,5 @@ public class TariffsEntity
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + price;
         return result;
-    }
-
-    @OneToMany(mappedBy = "tariffsByTariffId")
-    public Collection<AvailableOptionsEntity> getAvailableOptionsesByTariffId()
-    {
-        return availableOptionsesByTariffId;
-    }
-
-    public void setAvailableOptionsesByTariffId(Collection<AvailableOptionsEntity> availableOptionsesByTariffId)
-    {
-        this.availableOptionsesByTariffId = availableOptionsesByTariffId;
-    }
-
-    @OneToMany(mappedBy = "tariffsByTariffId")
-    public Collection<ContractsEntity> getContractsesByTariffId()
-    {
-        return contractsesByTariffId;
-    }
-
-    public void setContractsesByTariffId(Collection<ContractsEntity> contractsesByTariffId)
-    {
-        this.contractsesByTariffId = contractsesByTariffId;
     }
 }
