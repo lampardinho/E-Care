@@ -22,11 +22,11 @@ public class LoginServlet extends HttpServlet
 
         if (isAdmin != null)
         {
-            request.getRequestDispatcher("/WEB-INF/admin_lobby.jsp").include(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
         }
         else
         {
-            request.getRequestDispatcher("/WEB-INF/client_lobby.jsp").include(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
         }
     }
 

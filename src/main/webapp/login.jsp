@@ -20,7 +20,7 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
 		<!-- Custom styles for this template -->
-		<link href="css/signin.css" rel="stylesheet">
+		<link href="css/ecare.css" rel="stylesheet">
 
 
 
@@ -31,11 +31,11 @@
 		<![endif]-->
 	</head>
 
-	<body>
+	<body class="signin-body">
 
 		<div class="container">
 
-			<form class="form-signin" method="post" action="loginServlet">
+			<form class="form-signin" method="post" action="login">
 				<h2 class="form-signin-heading">Please sign in</h2>
 				<label for="inputEmail" class="sr-only">Email address</label>
 				<input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
