@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.ecare.dao;
+package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -9,6 +9,15 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "users", schema = "", catalog = "ecare")
+@NamedQueries(
+        {
+                @NamedQuery (name = "Client.getAllClients", query = "SELECT c FROM User c WHERE c.isAdmin = 0"),
+                @NamedQuery (name = "Client.findClientByLoginAndPassword", query = "SELECT c FROM User c WHERE c.email = :login AND c.password = :password"),
+                @NamedQuery (name = "Client.findClientByNumber", query = "SELECT cn.userId FROM Contract cn WHERE cn.number = :number"),
+                @NamedQuery (name = "Client.findClientByLogin", query = "SELECT c FROM User c WHERE c.email = :login"),
+                @NamedQuery (name = "Client.deleteAllClients", query = "DELETE FROM User WHERE isAdmin = 0"),
+                @NamedQuery (name = "Client.size", query="SELECT count(c) FROM User c WHERE c.isAdmin = 0")
+        })
 public class User
 {
     @Id

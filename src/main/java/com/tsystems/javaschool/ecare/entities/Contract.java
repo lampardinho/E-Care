@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.ecare.dao;
+package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -8,6 +8,15 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "contracts", schema = "", catalog = "ecare")
+@NamedQueries(
+        {
+                @NamedQuery (name = "Contract.getAllContracts", query = "SELECT c FROM Contract c"),
+                @NamedQuery (name = "Contract.findContractByNumber", query = "SELECT c FROM Contract c WHERE c.number = :number"),
+                @NamedQuery (name = "Contract.getAllContractsForClient", query = "SELECT c FROM Contract c WHERE c.client.id = :id"),
+                @NamedQuery (name = "Contract.deleteAllContracts", query="DELETE FROM Contract"),
+                @NamedQuery (name = "Contract.deleteAllContractsForClient", query = "DELETE FROM Contract WHERE client.id = ?1"),
+                @NamedQuery (name = "Contract.size", query="SELECT count(c) FROM Contract c")
+        })
 public class Contract
 {
     @Id

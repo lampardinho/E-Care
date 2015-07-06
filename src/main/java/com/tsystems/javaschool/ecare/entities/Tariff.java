@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.ecare.dao;
+package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -8,6 +8,12 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "tariffs", schema = "", catalog = "ecare")
+@NamedQueries(
+        {
+                @NamedQuery (name = "Tariff.getAllTariffs", query = "SELECT t FROM Tariff t"),
+                @NamedQuery (name = "Tariff.deleteAllTariffs", query = "DELETE FROM Tariff"),
+                @NamedQuery (name = "Tariff.size", query="SELECT count(t) FROM Tariff t")
+        })
 public class Tariff
 {
     @Id
