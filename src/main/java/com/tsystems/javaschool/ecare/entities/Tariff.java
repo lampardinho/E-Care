@@ -17,15 +17,14 @@ import java.util.Collection;
 public class Tariff
 {
     @Id
-    @Column(name = "tariff_id", nullable = false, insertable = true, updatable = true)
+    @Column(name = "tariff_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int tariffId;
 
-    @Basic
-    @Column(name = "name", nullable = false, insertable = true, updatable = true, length = 50)
+    @Column(name = "name")
     private String name;
 
-    @Basic
-    @Column(name = "price", nullable = false, insertable = true, updatable = true)
+    @Column(name = "price")
     private int price;
 
     @ManyToMany
@@ -76,6 +75,8 @@ public class Tariff
     {
         this.availableOptions = availableOptions;
     }
+
+    public Tariff(){}
 
     public Tariff(String name, int price)
     {

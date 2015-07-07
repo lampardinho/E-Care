@@ -2,15 +2,16 @@ package com.tsystems.javaschool.ecare.dao;
 
 
 import com.tsystems.javaschool.ecare.entities.Tariff;
-import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
 
-public class TariffDAO extends AbstractDAO<Tariff> {
+public class TariffDAO implements IAbstractDAO<Tariff>
+{
     private static TariffDAO instance;
-    private EntityManager em = EntityManagerUtil.getEm();
+    private EntityManager em = EntityManagerFactoryUtil.getEm();
 
     private TariffDAO() {
     }
@@ -24,32 +25,32 @@ public class TariffDAO extends AbstractDAO<Tariff> {
     }
 
     @Override
-    protected Tariff doSaveOrUpdate(Tariff tr) {
+    public Tariff saveOrUpdate(Tariff tr) {
         return em.merge(tr);
     }
 
     @Override
-    protected Tariff doLoad(long id) {
+    public Tariff load(long id) {
         return em.find(Tariff.class, id);
     }
 
     @Override
-    protected void doDelete(Tariff tr) {
+    public void delete(Tariff tr) {
         em.remove(tr);
     }
 
     @Override
-    protected List<Tariff> doGetAll() {
+    public List<Tariff> getAll() {
         return em.createNamedQuery("Tariff.getAllTariffs", Tariff.class).getResultList();
     }
 
     @Override
-    protected void doDeleteAll() {
+    public void deleteAll() {
         em.createNamedQuery("Tariff.deleteAllTariffs").executeUpdate();
     }
 
     @Override
-    protected long doSize() {
+    public long getCount() {
         return ((Number)em.createNamedQuery("Tariff.size").getSingleResult()).longValue();
     }
 }

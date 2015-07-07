@@ -2,16 +2,17 @@ package com.tsystems.javaschool.ecare.dao;
 
 
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 
 
-public class UserDAO extends AbstractDAO<User> {
+public class UserDAO implements IAbstractDAO<User>
+{
     private static UserDAO instance;
-    private EntityManager em = EntityManagerUtil.getEm();
+    private EntityManager em = EntityManagerFactoryUtil.getEm();
 
     private UserDAO() {
     }
@@ -25,12 +26,12 @@ public class UserDAO extends AbstractDAO<User> {
     }
 
     @Override
-    protected User doSaveOrUpdate(User cl) {
+    public User saveOrUpdate(User cl) {
         return em.merge(cl);
     }
 
     @Override
-    protected User doLoad(long id) {
+    public User load(long id) {
         return em.find(User.class, id);
     }
 
@@ -48,22 +49,22 @@ public class UserDAO extends AbstractDAO<User> {
     }
 
     @Override
-    protected void doDelete(User cl) {
+    public void delete(User cl) {
         em.remove(cl);
     }
 
     @Override
-    protected List<User> doGetAll() {
+    public List<User> getAll() {
         return em.createNamedQuery("Client.getAllClients", User.class).getResultList();
     }
 
     @Override
-    protected void doDeleteAll() {
+    public void deleteAll() {
         em.createNamedQuery("Client.deleteAllClients").executeUpdate();
     }
 
     @Override
-    protected long doSize() {
+    public long getCount() {
         return ((Number)em.createNamedQuery("Client.size").getSingleResult()).longValue();
     }
 

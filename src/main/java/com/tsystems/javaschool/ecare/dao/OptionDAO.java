@@ -2,16 +2,17 @@ package com.tsystems.javaschool.ecare.dao;
 
 
 import com.tsystems.javaschool.ecare.entities.Option;
-import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 
 
-public class OptionDAO extends AbstractDAO<Option> {
+public class OptionDAO implements IAbstractDAO<Option>
+{
     private static OptionDAO instance;
-    private EntityManager em = EntityManagerUtil.getEm();
+    private EntityManager em = EntityManagerFactoryUtil.getEm();
 
     private OptionDAO() {
     }
@@ -25,12 +26,12 @@ public class OptionDAO extends AbstractDAO<Option> {
     }
 
     @Override
-    protected Option doSaveOrUpdate(Option op) {
+    public Option saveOrUpdate(Option op) {
         return em.merge(op);
     }
 
     @Override
-    protected Option doLoad(long id) {
+    public Option load(long id) {
         return em.find(Option.class, id);
     }
 
@@ -42,17 +43,17 @@ public class OptionDAO extends AbstractDAO<Option> {
     }
 
     @Override
-    protected void doDelete(Option op) {
+    public void delete(Option op) {
         em.remove(op);
     }
 
     @Override
-    protected List<Option> doGetAll() {
+    public List<Option> getAll() {
         return em.createNamedQuery("Option.getAllOptions", Option.class).getResultList();
     }
 
     @Override
-    protected void doDeleteAll() {
+    public void deleteAll() {
         em.createNamedQuery("Option.deleteAllOptions").executeUpdate();
     }
 
@@ -69,7 +70,7 @@ public class OptionDAO extends AbstractDAO<Option> {
     }
 
     @Override
-    protected long doSize() {
+    public long getCount() {
         return ((Number)em.createNamedQuery("Option.size").getSingleResult()).longValue();
     }
 }

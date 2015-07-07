@@ -2,35 +2,42 @@ package com.tsystems.javaschool.ecare.dao;
 
 
 import com.tsystems.javaschool.ecare.entities.Contract;
-import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import java.util.List;
 
 
-public class ContractDAO extends AbstractDAO<Contract> {
-    private static ContractDAO instance;
-    private EntityManager em = EntityManagerUtil.getEm();
+public class ContractDAO implements IAbstractDAO<Contract>
+{
+    private static volatile ContractDAO instance;
+    private EntityManagerFactory emf = EntityManagerFactoryUtil.getEmf();
 
     private ContractDAO() {
     }
 
-    public static ContractDAO getInstance()
-    {
-        if (instance == null) {
-            instance = new ContractDAO();
+    public static ContractDAO getInstance() {
+        ContractDAO localInstance = instance;
+        if (localInstance == null) {
+            synchronized (ContractDAO.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new ContractDAO();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     @Override
-    protected Contract doSaveOrUpdate(Contract cn) {
+    public Contract saveOrUpdate(Contract cn) {
         return em.merge(cn);
     }
 
     @Override
-    protected Contract doLoad(long id) {
+    public Contract load(long id) {
         return em.find(Contract.class, id);
     }
 
@@ -41,12 +48,12 @@ public class ContractDAO extends AbstractDAO<Contract> {
     }
 
     @Override
-    protected void doDelete(Contract cn) {
+    public void delete(Contract cn) {
         em.remove(cn);
     }
 
     @Override
-    protected List<Contract> doGetAll() {
+    public List<Contract> getAll() {
         return em.createNamedQuery("Contract.getAllContracts", Contract.class).getResultList();
     }
 
@@ -57,7 +64,7 @@ public class ContractDAO extends AbstractDAO<Contract> {
     }
 
     @Override
-    protected void doDeleteAll() {
+    public void deleteAll() {
         em.createNamedQuery("Contract.deleteAllContracts").executeUpdate();
     }
 
@@ -68,7 +75,7 @@ public class ContractDAO extends AbstractDAO<Contract> {
     }
 
     @Override
-    protected long doSize() {
+    public long getCount() {
         return ((Number)em.createNamedQuery("Contract.size").getSingleResult()).longValue();
     }
 }

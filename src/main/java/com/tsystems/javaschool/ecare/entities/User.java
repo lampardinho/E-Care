@@ -13,7 +13,7 @@ import java.util.Collection;
         {
                 @NamedQuery (name = "Client.getAllClients", query = "SELECT c FROM User c WHERE c.isAdmin = 0"),
                 @NamedQuery (name = "Client.findClientByLoginAndPassword", query = "SELECT c FROM User c WHERE c.email = :login AND c.password = :password"),
-                @NamedQuery (name = "Client.findClientByNumber", query = "SELECT cn.userId FROM Contract cn WHERE cn.number = :number"),
+                @NamedQuery (name = "Client.findClientByNumber", query = "SELECT cn.user FROM Contract cn WHERE cn.phoneNumber = :number"),
                 @NamedQuery (name = "Client.findClientByLogin", query = "SELECT c FROM User c WHERE c.email = :login"),
                 @NamedQuery (name = "Client.deleteAllClients", query = "DELETE FROM User WHERE isAdmin = 0"),
                 @NamedQuery (name = "Client.size", query="SELECT count(c) FROM User c WHERE c.isAdmin = 0")
@@ -21,39 +21,32 @@ import java.util.Collection;
 public class User
 {
     @Id
-    @Column(name = "user_id", nullable = false, insertable = true, updatable = true)
+    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
-    @Basic
-    @Column(name = "name", nullable = false, insertable = true, updatable = true, length = 50)
+    @Column(name = "name")
     private String name;
 
-    @Basic
-    @Column(name = "surname", nullable = false, insertable = true, updatable = true, length = 50)
+    @Column(name = "surname")
     private String surname;
 
-    @Basic
-    @Column(name = "birth_date", nullable = false, insertable = true, updatable = true)
+    @Column(name = "birth_date")
     private Date birthDate;
 
-    @Basic
-    @Column(name = "passport_data", nullable = false, insertable = true, updatable = true, length = 50)
+    @Column(name = "passport_data")
     private String passportData;
 
-    @Basic
-    @Column(name = "address", nullable = false, insertable = true, updatable = true, length = 50)
+    @Column(name = "address")
     private String address;
 
-    @Basic
-    @Column(name = "email", nullable = false, insertable = true, updatable = true, length = 50)
+    @Column(name = "email")
     private String email;
 
-    @Basic
-    @Column(name = "password", nullable = false, insertable = true, updatable = true, length = 50)
+    @Column(name = "password")
     private String password;
 
-    @Basic
-    @Column(name = "is_admin", nullable = false, insertable = true, updatable = true)
+    @Column(name = "is_admin")
     private byte isAdmin;
 
     @ManyToMany
@@ -150,14 +143,14 @@ public class User
     }
 
 
-    public byte getIsAdmin()
+    public boolean getIsAdmin()
     {
-        return isAdmin;
+        return isAdmin != 0;
     }
 
-    public void setIsAdmin(byte isAdmin)
+    public void setIsAdmin(boolean isAdmin)
     {
-        this.isAdmin = isAdmin;
+        this.isAdmin = (isAdmin) ? (byte)1 : 0;
     }
 
     public Collection<Contract> getLockedContracts()

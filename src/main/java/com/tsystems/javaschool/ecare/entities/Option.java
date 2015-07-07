@@ -20,19 +20,17 @@ import java.util.Collection;
 public class Option
 {
     @Id
-    @Column(name = "option_id", nullable = false, insertable = true, updatable = true)
+    @Column(name = "option_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int optionId;
 
-    @Basic
-    @Column(name = "name", nullable = false, insertable = true, updatable = true, length = 50)
+    @Column(name = "name")
     private String name;
 
-    @Basic
-    @Column(name = "connection_price", nullable = false, insertable = true, updatable = true)
+    @Column(name = "connection_price")
     private int connectionPrice;
 
-    @Basic
-    @Column(name = "monthly_price", nullable = false, insertable = true, updatable = true)
+    @Column(name = "monthly_price")
     private int monthlyPrice;
 
     @ManyToMany
@@ -111,6 +109,7 @@ public class Option
         this.lockedOptions = lockedOptions;
     }
 
+    public Option(){}
 
     public Option(String name, int connectionPrice, int monthlyPrice)
     {
