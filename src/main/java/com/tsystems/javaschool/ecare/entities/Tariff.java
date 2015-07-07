@@ -77,6 +77,12 @@ public class Tariff
         this.availableOptions = availableOptions;
     }
 
+    public Tariff(String name, int price)
+    {
+        this.name = name;
+        this.price = price;
+    }
+
     @Override
     public boolean equals(Object o)
     {

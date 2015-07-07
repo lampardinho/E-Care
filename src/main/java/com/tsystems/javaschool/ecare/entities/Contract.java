@@ -43,6 +43,7 @@ public class Contract
             inverseJoinColumns=@JoinColumn(name="option_id"))
     private Collection<Option> selectedOptions;
 
+    private int phoneNumber;
 
     public int getContractId()
     {
@@ -96,6 +97,23 @@ public class Contract
         this.selectedOptions = selectedOptions;
     }
 
+
+    public int getPhoneNumber()
+    {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(int phoneNumber)
+    {
+        this.phoneNumber = phoneNumber;
+    }
+
+
+    public Contract(int phoneNumber)
+    {
+        this.phoneNumber = phoneNumber;
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -119,4 +137,6 @@ public class Contract
         result = 31 * result + tariffId;
         return result;
     }
+
+
 }

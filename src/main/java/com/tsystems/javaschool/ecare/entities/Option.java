@@ -112,6 +112,13 @@ public class Option
     }
 
 
+    public Option(String name, int connectionPrice, int monthlyPrice)
+    {
+        this.name = name;
+        this.connectionPrice = connectionPrice;
+        this.monthlyPrice = monthlyPrice;
+    }
+
     @Override
     public boolean equals(Object o)
     {
