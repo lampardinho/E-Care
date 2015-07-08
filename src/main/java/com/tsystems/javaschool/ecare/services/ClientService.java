@@ -3,7 +3,7 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.dao.UserDAO;
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
 
@@ -23,10 +23,7 @@ public class ClientService
 {
 
     /*Instance of the singleton class*/
-    private static ClientService instance;
-
-    /*Entity manager for working with JPA methods*/
-    private EntityManagerFactory emf = EntityManagerFactoryUtil.getEmf();
+    private static volatile ClientService instance;
 
     /*SQL client implementations of abstract DAO class*/
     private IAbstractDAO<User> DAO = UserDAO.getInstance();
@@ -44,10 +41,16 @@ public class ClientService
      * @return instance of class.
      */
     public static ClientService getInstance() {
-        if (instance == null) {
-            instance = new ClientService();
+        ClientService localInstance = instance;
+        if (localInstance == null) {
+            synchronized (ClientService.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new ClientService();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     /**
@@ -60,12 +63,11 @@ public class ClientService
      */
     public User saveOrUpdateClient(User cl) throws Exception {
         logger.info("Save/update client " + cl + " in DB.");
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction et = em.getTransaction();
+
         try {
-            et.begin();
+            EntityManagerUtil.beginTransaction();
             User client = DAO.saveOrUpdate(cl);
-            et.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(client == null) {
                 Exception ecx = new Exception("Failed to save/update client " + cl + " in DB.");
@@ -77,9 +79,8 @@ public class ClientService
             return client;
         }
         catch (RuntimeException re) {
-            if(et.isActive()) {
-                et.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -94,11 +95,11 @@ public class ClientService
      */
     public User loadClient(long id) throws Exception {
         logger.info("Load client with id: " + id + " from DB.");
-        EntityTransaction et = em.getTransaction();
+        
         try {
-            et.begin();
+            EntityManagerUtil.beginTransaction();
             User cl = DAO.load(id);
-            et.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(cl == null) {
                 Exception ecx = new Exception("Client with id = " + id + " not found in DB.");
@@ -110,9 +111,8 @@ public class ClientService
             return cl;
         }
         catch (RuntimeException re) {
-            if(et.isActive()) {
-                et.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -130,9 +130,9 @@ public class ClientService
     public User findClient(String login, String password) throws Exception {
         logger.info("Find client with login: " + login + " and password:" + password + " in DB.");
         User cl = null;
-        EntityTransaction et = em.getTransaction();
+        
         try {
-            et.begin();
+            EntityManagerUtil.beginTransaction();
             try {
                 // Searching of client in the database by DAO method.
                 cl = clDAO.findClientByLoginAndPassword(login, password);
@@ -143,14 +143,13 @@ public class ClientService
                 logger.warn(ecx.getMessage(), nrx);
                 throw ecx;
             }
-            et.commit();
+            EntityManagerUtil.commit();
             logger.info("Client " + cl + " found and loaded from DB.");
             return cl;
         }
         catch (RuntimeException re) {
-            if(et.isActive()) {
-                et.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -165,10 +164,9 @@ public class ClientService
      */
     public User findClientByNumber(long number) throws Exception {
         logger.info("Find client with telephone number: " + number + " in DB.");
-        EntityTransaction et = em.getTransaction();
         User cl = null;
         try {
-            et.begin();
+            EntityManagerUtil.beginTransaction();
             try {
                 // Search of client in the database by DAO method.
                 cl = clDAO.findClientByNumber(number);
@@ -179,14 +177,13 @@ public class ClientService
                 logger.warn(ecx.getMessage(), nrx);
                 throw ecx;
             }
-            et.commit();
+            EntityManagerUtil.commit();
             logger.info("Client " + cl + " found and loaded from DB.");
             return cl;
         }
         catch (RuntimeException re) {
-            if(et.isActive()) {
-                et.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -200,9 +197,8 @@ public class ClientService
      */
     public void deleteClient(long id) throws Exception {
         logger.info("Delete client with id: " + id + " from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             User cl = DAO.load(id);
             //If DAO returns null method will throws an Exception.
             if(cl == null) {
@@ -212,13 +208,12 @@ public class ClientService
             }
             // Else client will be deleted from the database.
             DAO.delete(cl);
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info("Client " + cl + " deleted from DB.");
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -232,11 +227,10 @@ public class ClientService
      */
     public List<User> getAllClients() throws Exception {
         logger.info("Get all clients from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             List<User> clients = DAO.getAll();
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception.
             if(clients == null) {
                 Exception ecx = new Exception("Failed to get all clients from DB.");
@@ -248,9 +242,8 @@ public class ClientService
             return clients;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -260,17 +253,15 @@ public class ClientService
      */
     public void deleteAllClients() {
         logger.info("Delete all clients from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             DAO.deleteAll();
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info("All clients deleted from DB.");
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -282,18 +273,16 @@ public class ClientService
      */
     public long getNumberOfClients() {
         logger.info("Get number of clients in DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             long number = DAO.getCount();
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info(number + "of clients obtained fromDB.");
             return number;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -307,28 +296,26 @@ public class ClientService
     public boolean existLogin(String login) {
         logger.info("Find client with login: " + login + " in DB.");
         User cl = null;
-        EntityTransaction et = em.getTransaction();
         try {
-            et.begin();
+            EntityManagerUtil.beginTransaction();
             try {
                 // Search of client in the database by DAO method.
                 cl = clDAO.findClientByLogin(login);
                 // If client does not exist in database, block try catches the NoResultException and
                 // return false.
             } catch(NoResultException nrx) {
-                et.commit();
+                EntityManagerUtil.commit();
                 logger.warn("Client with login: " + login + " does not exist.");
                 return false;
             }
-            et.commit();
+            EntityManagerUtil.commit();
             logger.info("Client " + cl + " found in DB.");
             // Else, if client exist and loaded, method return true.
             return true;
         }
         catch (RuntimeException re) {
-            if(et.isActive()) {
-                et.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }

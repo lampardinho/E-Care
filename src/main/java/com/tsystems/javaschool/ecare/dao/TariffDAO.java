@@ -2,7 +2,7 @@ package com.tsystems.javaschool.ecare.dao;
 
 
 import com.tsystems.javaschool.ecare.entities.Tariff;
-import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -10,47 +10,51 @@ import java.util.List;
 
 public class TariffDAO implements IAbstractDAO<Tariff>
 {
-    private static TariffDAO instance;
-    private EntityManager em = EntityManagerFactoryUtil.getEm();
+    private static volatile TariffDAO instance;
 
     private TariffDAO() {
     }
 
-    public static TariffDAO getInstance()
-    {
-        if (instance == null) {
-            instance = new TariffDAO();
+    public static TariffDAO getInstance() {
+        TariffDAO localInstance = instance;
+        if (localInstance == null) {
+            synchronized (TariffDAO.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new TariffDAO();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     @Override
     public Tariff saveOrUpdate(Tariff tr) {
-        return em.merge(tr);
+        return EntityManagerUtil.getEntityManager().merge(tr);
     }
 
     @Override
     public Tariff load(long id) {
-        return em.find(Tariff.class, id);
+        return EntityManagerUtil.getEntityManager().find(Tariff.class, id);
     }
 
     @Override
     public void delete(Tariff tr) {
-        em.remove(tr);
+        EntityManagerUtil.getEntityManager().remove(tr);
     }
 
     @Override
     public List<Tariff> getAll() {
-        return em.createNamedQuery("Tariff.getAllTariffs", Tariff.class).getResultList();
+        return EntityManagerUtil.getEntityManager().createNamedQuery("Tariff.getAllTariffs", Tariff.class).getResultList();
     }
 
     @Override
     public void deleteAll() {
-        em.createNamedQuery("Tariff.deleteAllTariffs").executeUpdate();
+        EntityManagerUtil.getEntityManager().createNamedQuery("Tariff.deleteAllTariffs").executeUpdate();
     }
 
     @Override
     public long getCount() {
-        return ((Number)em.createNamedQuery("Tariff.size").getSingleResult()).longValue();
+        return ((Number)EntityManagerUtil.getEntityManager().createNamedQuery("Tariff.size").getSingleResult()).longValue();
     }
 }

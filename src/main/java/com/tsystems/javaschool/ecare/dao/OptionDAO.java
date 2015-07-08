@@ -2,7 +2,7 @@ package com.tsystems.javaschool.ecare.dao;
 
 
 import com.tsystems.javaschool.ecare.entities.Option;
-import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -11,32 +11,36 @@ import java.util.List;
 
 public class OptionDAO implements IAbstractDAO<Option>
 {
-    private static OptionDAO instance;
-    private EntityManager em = EntityManagerFactoryUtil.getEm();
+    private static volatile OptionDAO instance;
 
     private OptionDAO() {
     }
 
-    public static OptionDAO getInstance()
-    {
-        if (instance == null) {
-            instance = new OptionDAO();
+    public static OptionDAO getInstance() {
+        OptionDAO localInstance = instance;
+        if (localInstance == null) {
+            synchronized (OptionDAO.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new OptionDAO();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     @Override
     public Option saveOrUpdate(Option op) {
-        return em.merge(op);
+        return EntityManagerUtil.getEntityManager().merge(op);
     }
 
     @Override
     public Option load(long id) {
-        return em.find(Option.class, id);
+        return EntityManagerUtil.getEntityManager().find(Option.class, id);
     }
 
     public Option findOptionByTitleAndTariffId(String title, long id) {
-        Query query = em.createNamedQuery("Option.findOptionByTitleAndTariffId", Option.class);
+        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Option.findOptionByTitleAndTariffId", Option.class);
         query.setParameter("title", title);
         query.setParameter("id", id);
         return (Option) query.getSingleResult();
@@ -44,33 +48,33 @@ public class OptionDAO implements IAbstractDAO<Option>
 
     @Override
     public void delete(Option op) {
-        em.remove(op);
+        EntityManagerUtil.getEntityManager().remove(op);
     }
 
     @Override
     public List<Option> getAll() {
-        return em.createNamedQuery("Option.getAllOptions", Option.class).getResultList();
+        return EntityManagerUtil.getEntityManager().createNamedQuery("Option.getAllOptions", Option.class).getResultList();
     }
 
     @Override
     public void deleteAll() {
-        em.createNamedQuery("Option.deleteAllOptions").executeUpdate();
+        EntityManagerUtil.getEntityManager().createNamedQuery("Option.deleteAllOptions").executeUpdate();
     }
 
     public List<Option> getAllOptionsForTariff(long id) {
-        Query query = em.createNamedQuery("Option.getAllOptionsForTariff", Option.class);
+        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Option.getAllOptionsForTariff", Option.class);
         query.setParameter("id", id);
         return query.getResultList();
     }
 
     public void deleteAllOptionsForTariff(long id) {
-        Query query = em.createNamedQuery("Option.deleteAllOptionsForTariff");
+        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Option.deleteAllOptionsForTariff");
         query.setParameter(1, id);
         query.executeUpdate();
     }
 
     @Override
     public long getCount() {
-        return ((Number)em.createNamedQuery("Option.size").getSingleResult()).longValue();
+        return ((Number)EntityManagerUtil.getEntityManager().createNamedQuery("Option.size").getSingleResult()).longValue();
     }
 }

@@ -3,7 +3,7 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.dao.TariffDAO;
 import com.tsystems.javaschool.ecare.entities.Tariff;
-import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
 
@@ -21,10 +21,7 @@ public class TariffService
 {
 
     /*Instance of the singleton class*/
-    private static TariffService instance;
-
-    /*Entity manager for working with JPA methods*/
-    private EntityManager em = EntityManagerFactoryUtil.getEm();
+    private static volatile TariffService instance;
 
     /*SQL tariff implementations of abstract DAO class*/
     private IAbstractDAO<Tariff> trDAO = TariffDAO.getInstance();
@@ -41,13 +38,17 @@ public class TariffService
      *
      * @return instance of class.
      */
-    public static TariffService getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new TariffService();
+    public static TariffService getInstance() {
+        TariffService localInstance = instance;
+        if (localInstance == null) {
+            synchronized (TariffService.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new TariffService();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     /**
@@ -60,11 +61,10 @@ public class TariffService
      */
     public Tariff saveOrUpdateTariff(Tariff tr) throws Exception {
         logger.info("Save/update tariff " + tr + " in DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             Tariff tariff = trDAO.saveOrUpdate(tr);
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception.
             if(tariff == null) {
                 Exception ecx = new Exception("Failed to save/update tariff " + tr + " in DB.");
@@ -76,9 +76,8 @@ public class TariffService
             return tariff;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -93,11 +92,10 @@ public class TariffService
      */
     public Tariff loadTariff(long id) throws Exception {
         logger.info("Load tariff with id: " + id + " from DB.");
-        EntityTransaction et = em.getTransaction();
         try {
-            et.begin();
+            EntityManagerUtil.beginTransaction();
             Tariff tr = trDAO.load(id);
-            et.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception.
             if(tr == null) {
                 Exception ecx = new Exception("Tariff with id = " + id + " not found.");
@@ -109,9 +107,8 @@ public class TariffService
             return tr;
         }
         catch (RuntimeException re) {
-            if(et.isActive()) {
-                et.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -125,9 +122,8 @@ public class TariffService
      */
     public void deleteTariff(long id) throws Exception {
         logger.info("Delete tariff with id: " + id + " from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             Tariff tr = trDAO.load(id);
             //If DAO returns null method will throws an Exception.
             if(tr == null) {
@@ -137,13 +133,12 @@ public class TariffService
             }
             // Else tariff will be deleted from the database.
             trDAO.delete(tr);
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info("Tariff " + tr + " deleted from DB.");
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -156,11 +151,10 @@ public class TariffService
     public List<Tariff> getAllTariffs() throws Exception
     {
         logger.info("Get all tariffs from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             List<Tariff> tariffs = trDAO.getAll();
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception.
             if(tariffs == null) {
                 Exception ecx = new Exception("Failed to get all tariffs from DB.");
@@ -172,9 +166,8 @@ public class TariffService
             return tariffs;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -184,17 +177,15 @@ public class TariffService
      */
     public void deleteAllTariffs() {
         logger.info("Delete all tariffs from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             trDAO.deleteAll();
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info("All tariffs deleted from DB.");
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -206,18 +197,16 @@ public class TariffService
      */
     public long getNumberOfTariffs() {
         logger.info("Get number of tariffs in DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             long number = trDAO.getCount();
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info(number + " of tariffs obtained fromDB.");
             return number;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }

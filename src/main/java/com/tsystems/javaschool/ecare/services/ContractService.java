@@ -3,7 +3,7 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.dao.ContractDAO;
 import com.tsystems.javaschool.ecare.entities.Contract;
-import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
 
@@ -22,10 +22,7 @@ public class ContractService
 {
 
     /*Instance of the singleton class*/
-    private static ContractService instance;
-
-    /*Entity manager for working with JPA methods*/
-    private EntityManager em = EntityManagerFactoryUtil.getEm();
+    private static volatile ContractService instance;
 
     /*SQL contract implementations of abstract DAO class*/
     private IAbstractDAO<Contract> DAO = ContractDAO.getInstance();
@@ -46,13 +43,17 @@ public class ContractService
      *
      * @return instance of class.
      */
-    public static ContractService getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new ContractService();
+    public static ContractService getInstance() {
+        ContractService localInstance = instance;
+        if (localInstance == null) {
+            synchronized (ContractService.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new ContractService();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     /**
@@ -65,11 +66,10 @@ public class ContractService
      */
     public Contract saveOrUpdateContract(Contract cn) throws Exception {
         logger.info("Save/update contract " + cn + " in DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             Contract contract = DAO.saveOrUpdate(cn);
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(contract == null) {
                 Exception ecx = new Exception("Failed to save/update contract " + cn + " in DB.");
@@ -81,9 +81,8 @@ public class ContractService
             return contract;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -98,11 +97,10 @@ public class ContractService
      */
     public Contract loadContract(long id) throws Exception {
         logger.info("Load contract with id: " + id + " from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             Contract cn = DAO.load(id);
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(cn == null) {
                 Exception ecx = new Exception("Contract with id = " + id + " not found in DB.");
@@ -114,9 +112,8 @@ public class ContractService
             return cn;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -133,9 +130,8 @@ public class ContractService
     public Contract findContractByNumber(long number) throws Exception {
         logger.info("Find contract by telephone number: " + number + " in DB.");
         Contract cn = null;
-        EntityTransaction et = em.getTransaction();
         try {
-            et.begin();
+            EntityManagerUtil.beginTransaction();
             try {
                 // Search of contract in the database by DAO method.
                 cn = cnDAO.findContractByNumber(number);
@@ -146,14 +142,13 @@ public class ContractService
                 logger.warn(ecx.getMessage(), nrx);
                 throw ecx;
             }
-            et.commit();
+            EntityManagerUtil.commit();
             logger.info("Contract " + cn + " found and loaded from DB.");
             return cn;
         }
         catch (RuntimeException re) {
-            if(et.isActive()) {
-                et.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -167,9 +162,8 @@ public class ContractService
      */
     public void deleteContract(long id) throws Exception {
         logger.info("Delete contract with id: " + id + " from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             Contract cn = DAO.load(id);
             //If DAO returns null method will throws an Exception.
             if(cn == null) {
@@ -179,13 +173,12 @@ public class ContractService
             }
             // Else contract will be deleted from the database.
             DAO.delete(cn);
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info("Contract " + cn + " deleted from DB.");
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -199,11 +192,10 @@ public class ContractService
      */
     public List<Contract> getAllContracts() throws Exception {
         logger.info("Get all contracts from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             List<Contract> contracts = DAO.getAll();
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(contracts == null) {
                 Exception ecx = new Exception("Failed to get all contracts from DB.");
@@ -215,9 +207,8 @@ public class ContractService
             return contracts;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -232,11 +223,10 @@ public class ContractService
      */
     public List<Contract> getAllContractsForClient(long id) throws Exception {
         logger.info("Get all contracts from DB for client with id: " + id + ".");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             List<Contract> contracts = cnDAO.getAllContractsForClient(id);
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(contracts == null) {
                 Exception ecx = new Exception("Failed to get all contracts from DB.");
@@ -248,9 +238,8 @@ public class ContractService
             return contracts;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -260,17 +249,15 @@ public class ContractService
      */
     public void deleteAllContracts() {
         logger.info("Delete all contracts from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             DAO.deleteAll();
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info("All contracts deleted from DB.");
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -282,17 +269,15 @@ public class ContractService
      */
     public void deleteAllContractsForClient(long id) {
         logger.info("Delete all contracts from DB for client with id: " + id + ".");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             cnDAO.deleteAllContractsForClient(id);
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info("All contracts for client id: " + id + " deleted from DB.");
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -304,18 +289,16 @@ public class ContractService
      */
     public long getNumberOfContracts() {
         logger.info("Get number of contracts in DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             long number = DAO.getCount();
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info(number + "of contracts obtained from DB.");
             return number;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }

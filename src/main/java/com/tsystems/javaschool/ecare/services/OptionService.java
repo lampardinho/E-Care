@@ -3,7 +3,7 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.dao.OptionDAO;
 import com.tsystems.javaschool.ecare.entities.Option;
-import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
 
@@ -21,10 +21,7 @@ public class OptionService
 {
 
     /*Instance of the singleton class*/
-    private static OptionService instance;
-
-    /*Entity manager for working with JPA methods*/
-    private EntityManager em = EntityManagerFactoryUtil.getEm();
+    private static volatile OptionService instance;
 
     /*SQL option implementations of abstract DAO class*/
     private IAbstractDAO<Option> DAO = OptionDAO.getInstance();
@@ -42,13 +39,17 @@ public class OptionService
      *
      * @return instance of class.
      */
-    public static OptionService getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new OptionService();
+    public static OptionService getInstance() {
+        OptionService localInstance = instance;
+        if (localInstance == null) {
+            synchronized (OptionService.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new OptionService();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     /**
@@ -61,11 +62,10 @@ public class OptionService
      */
     public Option saveOrUpdateOption(Option op) throws Exception {
         logger.info("Save/update option " + op + " in DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             Option option = DAO.saveOrUpdate(op);
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(option == null) {
                 Exception ecx = new Exception("Failed to save/update option " + op + " in DB.");
@@ -77,9 +77,8 @@ public class OptionService
             return option;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -94,11 +93,10 @@ public class OptionService
      */
     public Option loadOption(long id) throws Exception {
         logger.info("Load option with id: " + id + " from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             Option op = DAO.load(id);
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(op == null) {
                 Exception ecx = new Exception("Option with id = " + id + " not found in DB.");
@@ -110,9 +108,8 @@ public class OptionService
             return op;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -126,9 +123,8 @@ public class OptionService
      */
     public void deleteOption(long id) throws Exception {
         logger.info("Delete option with id: " + id + " from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             Option op = DAO.load(id);
             //If DAO returns null method will throws an Exception
             if(op == null) {
@@ -138,13 +134,12 @@ public class OptionService
             }
             // Else option will be deleted from the database.
             DAO.delete(op);
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info("Option " + op + " deleted from DB.");
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -158,11 +153,10 @@ public class OptionService
      */
     public List<Option> getAllOptions() throws Exception {
         logger.info("Get all options from DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             List<Option> options = DAO.getAll();
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(options == null) {
                 Exception ecx = new Exception("Failed to get all options from DB.");
@@ -174,9 +168,8 @@ public class OptionService
             return options;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -191,11 +184,10 @@ public class OptionService
      */
     public List<Option> getAllOptionsForTariff(long id) throws Exception{
         logger.info("Get all options from DB for tariff with id: " + id + ".");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             List<Option> options = opDAO.getAllOptionsForTariff(id);
-            tx.commit();
+            EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(options == null) {
                 Exception ecx = new Exception("Failed to get all options from DB for tariff id: " + id + ".");
@@ -207,9 +199,8 @@ public class OptionService
             return options;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -221,17 +212,15 @@ public class OptionService
      */
     public void deleteAllOptionsForTariff(long id) {
         logger.info("Delete all options from DB for tariff with id: " + id + ".");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             opDAO.deleteAllOptionsForTariff(id);
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info("All options for tariff id: " + id + " deleted from DB.");
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }
@@ -243,18 +232,16 @@ public class OptionService
      */
     public long getNumberOfOptions() {
         logger.info("Get number of options in DB.");
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
+            EntityManagerUtil.beginTransaction();
             long number = DAO.getCount();
-            tx.commit();
+            EntityManagerUtil.commit();
             logger.info(number + "of options obtained from DB.");
             return number;
         }
         catch (RuntimeException re) {
-            if(tx.isActive()) {
-                tx.rollback();
-            }
+            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+                EntityManagerUtil.rollback();
             throw re;
         }
     }

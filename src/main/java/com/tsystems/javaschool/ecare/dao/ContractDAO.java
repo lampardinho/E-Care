@@ -2,9 +2,8 @@ package com.tsystems.javaschool.ecare.dao;
 
 
 import com.tsystems.javaschool.ecare.entities.Contract;
-import com.tsystems.javaschool.ecare.util.EntityManagerFactoryUtil;
+import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.List;
 public class ContractDAO implements IAbstractDAO<Contract>
 {
     private static volatile ContractDAO instance;
-    private EntityManagerFactory emf = EntityManagerFactoryUtil.getEmf();
 
     private ContractDAO() {
     }
@@ -33,49 +31,49 @@ public class ContractDAO implements IAbstractDAO<Contract>
 
     @Override
     public Contract saveOrUpdate(Contract cn) {
-        return em.merge(cn);
+        return EntityManagerUtil.getEntityManager().merge(cn);
     }
 
     @Override
     public Contract load(long id) {
-        return em.find(Contract.class, id);
+        return EntityManagerUtil.getEntityManager().find(Contract.class, id);
     }
 
     public Contract findContractByNumber(long number) {
-        Query query = em.createNamedQuery("Contract.findContractByNumber", Contract.class);
+        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Contract.findContractByNumber", Contract.class);
         query.setParameter("number", number);
         return (Contract) query.getSingleResult();
     }
 
     @Override
     public void delete(Contract cn) {
-        em.remove(cn);
+        EntityManagerUtil.getEntityManager().remove(cn);
     }
 
     @Override
     public List<Contract> getAll() {
-        return em.createNamedQuery("Contract.getAllContracts", Contract.class).getResultList();
+        return EntityManagerUtil.getEntityManager().createNamedQuery("Contract.getAllContracts", Contract.class).getResultList();
     }
 
     public List<Contract> getAllContractsForClient(long id) {
-        Query query = em.createNamedQuery("Contract.getAllContractsForClient", Contract.class);
+        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Contract.getAllContractsForClient", Contract.class);
         query.setParameter("id", id);
         return query.getResultList();
     }
 
     @Override
     public void deleteAll() {
-        em.createNamedQuery("Contract.deleteAllContracts").executeUpdate();
+        EntityManagerUtil.getEntityManager().createNamedQuery("Contract.deleteAllContracts").executeUpdate();
     }
 
     public void deleteAllContractsForClient(long id) {
-        Query query = em.createNamedQuery("Contract.deleteAllContractsForClient");
+        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Contract.deleteAllContractsForClient");
         query.setParameter(1, id);
         query.executeUpdate();
     }
 
     @Override
     public long getCount() {
-        return ((Number)em.createNamedQuery("Contract.size").getSingleResult()).longValue();
+        return ((Number)EntityManagerUtil.getEntityManager().createNamedQuery("Contract.size").getSingleResult()).longValue();
     }
 }
