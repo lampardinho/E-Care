@@ -42,7 +42,7 @@ public class OptionDAO implements IAbstractDAO<Option>
     public Option findOptionByTitleAndTariffId(String title, long id) {
         Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Option.findOptionByTitleAndTariffId", Option.class);
         query.setParameter("title", title);
-        query.setParameter("id", id);
+        //query.setParameter("id", id);
         return (Option) query.getSingleResult();
     }
 
@@ -63,13 +63,13 @@ public class OptionDAO implements IAbstractDAO<Option>
 
     public List<Option> getAllOptionsForTariff(long id) {
         Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Option.getAllOptionsForTariff", Option.class);
-        query.setParameter("id", id);
+        //query.setParameter("id", id);
         return query.getResultList();
     }
 
     public void deleteAllOptionsForTariff(long id) {
         Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Option.deleteAllOptionsForTariff");
-        query.setParameter(1, id);
+        //query.setParameter(1, id);
         query.executeUpdate();
     }
 

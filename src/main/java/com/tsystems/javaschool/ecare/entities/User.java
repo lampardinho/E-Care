@@ -11,9 +11,9 @@ import java.util.Collection;
 @Table(name = "users", schema = "", catalog = "ecare")
 @NamedQueries(
         {
-                @NamedQuery (name = "Client.getAllClients", query = "SELECT c FROM User c WHERE c.isAdmin = 0"),
-                @NamedQuery (name = "Client.findClientByLoginAndPassword", query = "SELECT c FROM User c WHERE c.email = :login AND c.password = :password"),
-                @NamedQuery (name = "Client.findClientByNumber", query = "SELECT cn.user FROM Contract cn WHERE cn.phoneNumber = :number"),
+                @NamedQuery (name = "User.getAllUsers", query = "SELECT c FROM User c WHERE c.isAdmin = 0"),
+                @NamedQuery (name = "User.findUserByLoginAndPassword", query = "SELECT c FROM User c WHERE c.email = :login AND c.password = :password"),
+                @NamedQuery (name = "User.findUserByPhoneNumber", query = "SELECT cn.user FROM Contract cn WHERE cn.phoneNumber = :number"),
                 @NamedQuery (name = "Client.findClientByLogin", query = "SELECT c FROM User c WHERE c.email = :login"),
                 @NamedQuery (name = "Client.deleteAllClients", query = "DELETE FROM User WHERE isAdmin = 0"),
                 @NamedQuery (name = "Client.size", query="SELECT count(c) FROM User c WHERE c.isAdmin = 0")

@@ -1,3 +1,4 @@
+<%@ page import="com.tsystems.javaschool.ecare.entities.User" %>
 <%--
   User: Kolia
   Date: 01.07.2015
@@ -45,7 +46,7 @@
 						<div id="contracts"></div>
 						<p class="navbar-text" id="current_contract"></p>
 						<div class="navbar-right">
-							<p class="navbar-text" id="user"><%= session.getAttribute("email") %></p>
+							<p class="navbar-text" id="user"><%= ((User)session.getAttribute("user")).getEmail() %></p>
 
 							<button type="button" class="btn btn-default navbar-btn" id="logout">Sign out</button>
 						</div>

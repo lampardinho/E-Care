@@ -25,11 +25,11 @@ public class Contract
     private int contractId;
 
     @ManyToOne
-    @Column(name = "user_id")
+    @JoinColumn(name="user_id", referencedColumnName="user_id")
     private User user;
 
     @ManyToOne
-    @Column(name = "tariff_id")
+    @JoinColumn(name="tariff_id", referencedColumnName="tariff_id")
     private Tariff tariff;
 
     @Column(name = "phone_number")

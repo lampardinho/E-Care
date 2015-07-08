@@ -83,6 +83,10 @@ public class ClientService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        /*finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }*/
     }
 
     /**
@@ -115,6 +119,10 @@ public class ClientService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        /*finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }*/
     }
 
     /**
@@ -152,6 +160,10 @@ public class ClientService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        /*finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }*/
     }
 
     /**

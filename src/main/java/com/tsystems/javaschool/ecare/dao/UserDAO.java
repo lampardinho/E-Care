@@ -4,7 +4,6 @@ package com.tsystems.javaschool.ecare.dao;
 import com.tsystems.javaschool.ecare.entities.User;
 import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -40,14 +39,14 @@ public class UserDAO implements IAbstractDAO<User>
     }
 
     public User findClientByLoginAndPassword(String login, String password) {
-        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Client.findClientByLoginAndPassword", User.class);
+        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("User.findUserByLoginAndPassword", User.class);
         query.setParameter("login", login);
         query.setParameter("password", password);
         return (User) query.getSingleResult();
     }
 
     public User findClientByNumber(long number) {
-        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Client.findClientByNumber", User.class);
+        Query query = EntityManagerUtil.getEntityManager().createNamedQuery("User.findUserByPhoneNumber", User.class);
         query.setParameter("number", number);
         return (User) query.getSingleResult();
     }
@@ -59,7 +58,7 @@ public class UserDAO implements IAbstractDAO<User>
 
     @Override
     public List<User> getAll() {
-        return EntityManagerUtil.getEntityManager().createNamedQuery("Client.getAllClients", User.class).getResultList();
+        return EntityManagerUtil.getEntityManager().createNamedQuery("User.getAllUsers", User.class).getResultList();
     }
 
     @Override

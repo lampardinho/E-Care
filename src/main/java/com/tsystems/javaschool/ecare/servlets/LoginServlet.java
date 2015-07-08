@@ -1,5 +1,8 @@
 package com.tsystems.javaschool.ecare.servlets;
 
+import com.tsystems.javaschool.ecare.entities.User;
+import com.tsystems.javaschool.ecare.services.ClientService;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,20 +22,31 @@ public class LoginServlet extends HttpServlet
     {
         PrintWriter out = response.getWriter();
         String email = request.getParameter("email");
+        String password = request.getParameter("password");
         String isAdmin = request.getParameter("isAdmin");
         //out.println(isAdmin);
 
-        HttpSession session=request.getSession();
-        session.setAttribute("email", email);
+        ClientService clientService = ClientService.getInstance();
+        try
+        {
+            User user = clientService.findClient(email, password);
+            HttpSession session=request.getSession();
+            session.setAttribute("user", user);
 
-        if (isAdmin != null)
-        {
-            request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
+            if (isAdmin != null)
+            {
+                request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
+            }
+            else
+            {
+                request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
+            }
         }
-        else
+        catch (Exception e)
         {
-            request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
+            e.printStackTrace();
         }
+
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
