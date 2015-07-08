@@ -11,19 +11,19 @@
 <ul class="list-group">
 	<c:forEach var="option" items="${options}">
 		<a href="#" class="list-group-item">
-			<p class="list-group-item-text">${option.name}</p>
-			<p class="list-group-item-text">Connection price: ${option.connectionPrice}</p>
-			<p class="list-group-item-text">Monthly price: ${option.monthlyPrice}</p>
+			<p  style="font-size:120%" class="list-group-item-text">${option.name}</p>
+			<p  style="font-size:120%" class="list-group-item-text">Connection price: ${option.connectionPrice}</p>
+			<p  style="font-size:120%" class="list-group-item-text">Monthly price: ${option.monthlyPrice}</p>
 		</a>
 	</c:forEach>
 
 	<a href="#" class="list-group-item list-group-item-success">
-		<p class="list-group-item-text">option name</p>
-		<p class="list-group-item-text">Price:</p>
+		<p  style="font-size:120%" class="list-group-item-text">option name</p>
+		<p  style="font-size:120%" class="list-group-item-text">Price:</p>
 	</a>
 
 	<a href="#" class="list-group-item disabled">
-		<p class="list-group-item-text">option name</p>
-		<p class="list-group-item-text">Price:</p>
+		<p  style="font-size:120%" class="list-group-item-text">option name</p>
+		<p  style="font-size:120%" class="list-group-item-text">Price:</p>
 	</a>
 </ul>

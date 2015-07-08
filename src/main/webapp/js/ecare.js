@@ -32,3 +32,17 @@ function get_tariffs() {
         $('#tariffs').html(responseText);
     });
 }
+
+function get_contract_info() {
+    var username=$('#user').text();
+
+    $.get('client_lobby',{user:username, action:"get_contract_info"},function(responseText) {
+        $('#contract_info').html(responseText);
+    });
+}
+
+$('#logout').click(function() {
+    $.get('client_lobby',{action:"sign_out"},function(responseText) {
+        window.location = "login.jsp";
+    });
+});

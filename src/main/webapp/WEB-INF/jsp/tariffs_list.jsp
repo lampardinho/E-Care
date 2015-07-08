@@ -11,14 +11,14 @@
 <ul class="list-group">
 	<c:forEach var="tariff" items="${tariffs}">
 		<a href="#" class="list-group-item">
-			<p class="list-group-item-text">${tariff.name}</p>
-			<p class="list-group-item-text">Price: ${tariff.price}</p>
+			<p  style="font-size:120%" class="list-group-item-text">${tariff.name}</p>
+			<p  style="font-size:120%" class="list-group-item-text">Price: ${tariff.price}</p>
 		</a>
 	</c:forEach>
 
 	<a href="#" class="list-group-item active">
-		<p class="list-group-item-text">tariff name</p>
-		<p class="list-group-item-text">Price:</p>
+		<p  style="font-size:120%" class="list-group-item-text">tariff name</p>
+		<p  style="font-size:120%" class="list-group-item-text">Price:</p>
 	</a>
 
 </ul>

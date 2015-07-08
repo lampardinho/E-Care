@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
@@ -31,6 +32,8 @@ public class ClientLobbyServlet extends HttpServlet
         String action = request.getParameter("action");
         System.out.println(action);
 
+        HttpSession session=request.getSession();
+
         List<Contract> contracts = new LinkedList<>();
         contracts.add(new Contract(34535235));
         contracts.add(new Contract(65432254));
@@ -46,9 +49,16 @@ public class ClientLobbyServlet extends HttpServlet
                 request.getRequestDispatcher("/WEB-INF/jsp/contracts_list.jsp").include(request, response);
                 break;
             }
+            case "select_contract":
+            {
+                Contract selectedContract = new Contract(555532);//request.getParameter("phoneNumber");
+                session.setAttribute("currentContract", selectedContract);
+                break;
+            }
             case "get_current_contract":
             {
-                out.print("Current contract: " + contracts.get(0).getPhoneNumber());
+                Contract currentContract = (Contract)session.getAttribute("currentContract");
+                out.print("Current contract: " + currentContract.getPhoneNumber());
                 break;
             }
             case "get_options":
@@ -71,6 +81,16 @@ public class ClientLobbyServlet extends HttpServlet
                 tariffs.add(new Tariff("Tariff 4", 100));
                 request.setAttribute("tariffs", tariffs);
                 request.getRequestDispatcher("/WEB-INF/jsp/tariffs_list.jsp").include(request, response);
+                break;
+            }
+            case "get_contract_info":
+            {
+                request.getRequestDispatcher("/WEB-INF/jsp/contract_info.jsp").include(request, response);
+                break;
+            }
+            case "sign_out":
+            {
+                session.invalidate();
                 break;
             }
         }

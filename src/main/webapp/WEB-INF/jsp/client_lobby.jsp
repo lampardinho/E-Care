@@ -20,7 +20,7 @@
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
 
 		<!-- Custom styles for this template -->
-		<link href="../../css/ecare.css" rel="stylesheet">
+		<link href="/css/ecare.css" rel="stylesheet">
 
 
 	</head>
@@ -45,9 +45,9 @@
 						<div id="contracts"></div>
 						<p class="navbar-text" id="current_contract"></p>
 						<div class="navbar-right">
-							<p class="navbar-text" id="user"><%= request.getParameter("email") %></p>
+							<p class="navbar-text" id="user"><%= session.getAttribute("email") %></p>
 
-							<button type="button" class="btn btn-default navbar-btn" onclick="window.location.href='../../login.jsp';">Sign out</button>
+							<button type="button" class="btn btn-default navbar-btn" id="logout">Sign out</button>
 						</div>
 
 					</div><!--/.nav-collapse -->
@@ -56,6 +56,7 @@
 
 			<!-- Main component for a primary marketing message or call to action -->
 			<div class="jumbotron">
+				<div id="contract_info"></div>
 				<div id="options"></div>
 
 				<div id="tariffs"></div>
@@ -76,6 +77,7 @@
 				get_current_contract();
 				get_options();
 				get_tariffs();
+				get_contract_info();
 			});
 		</script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
