@@ -46,3 +46,9 @@ $('#logout').click(function() {
         window.location = "login.jsp";
     });
 });
+
+
+
+$( "#other" ).click(function() {
+    $( ".target" ).change();
+});

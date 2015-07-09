@@ -1,3 +1,4 @@
+<%@ page import="com.tsystems.javaschool.ecare.entities.User" %>
 <%--
   Created by IntelliJ IDEA.
   User: Kolia
@@ -30,18 +31,17 @@
 
 	<body>
 
+		<%
+			User user = (User)session.getAttribute("user");
+		%>
+
+
 		<div class="container">
 
 			<!-- Static navbar -->
 			<nav class="navbar navbar-default navbar-fixed-top">
 				<div class="container">
 					<div class="navbar-header">
-						<%--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-							<span class="sr-only">Toggle navigation</span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</button>--%>
 						<a class="navbar-brand" href="#">E-Care</a>
 					</div>
 					<div id="navbar" class="navbar-collapse collapse">
@@ -52,7 +52,7 @@
 							<button type="submit" class="btn btn-default">Search</button>
 						</form>
 						<div class="navbar-right">
-							<p class="navbar-text"><%= request.getParameter("email") %></p>
+							<p class="navbar-text"><%= user.getEmail() %></p>
 
 							<button type="button" class="btn btn-default navbar-btn">Sign out</button>
 						</div>
@@ -62,8 +62,8 @@
 			</nav>
 
 			<!-- Main component for a primary marketing message or call to action -->
-			<div class="jumbotron">
-				<h1>Search results:</h1>
+			<div id="content" class="jumbotron">
+				<h3>Search results:</h3>
 
 			</div>
 

@@ -3,6 +3,7 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.dao.ContractDAO;
 import com.tsystems.javaschool.ecare.entities.Contract;
+import com.tsystems.javaschool.ecare.entities.User;
 import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
@@ -125,7 +126,7 @@ public class ContractService
      * @throws Exception if DAO returns NoResultException during finding of contract
      * in the database.
      */
-    public Contract findContractByNumber(long number) throws Exception {
+    public Contract getContractByPhoneNumber(int number) throws Exception {
         logger.info("Find contract by telephone number: " + number + " in DB.");
         Contract cn = null;
         try {
@@ -214,16 +215,16 @@ public class ContractService
     /**
      * This method implements receiving of all contracts for client from the database.
      *
-     * @param id client id for searching of all contracts for this client.
+     * @param user client id for searching of all contracts for this client.
      * @return list of received contracts.
      * @throws Exception if an error occurred during receiving of entities
      * and DAO returns null.
      */
-    public List<Contract> getAllContractsForClient(long id) throws Exception {
-        logger.info("Get all contracts from DB for client with id: " + id + ".");
+    public List<Contract> getUserContracts(User user) throws Exception {
+        logger.info("Get all contracts from DB for client with id: " + user.getUserId() + ".");
         try {
             EntityManagerUtil.beginTransaction();
-            List<Contract> contracts = cnDAO.getAllContractsForClient(id);
+            List<Contract> contracts = cnDAO.getAllContractsForClient(user.getUserId());
             EntityManagerUtil.commit();
             //If DAO returns null method will throws an Exception
             if(contracts == null) {
@@ -231,7 +232,7 @@ public class ContractService
                 logger.error(ecx.getMessage(), ecx);
                 throw ecx;
             }
-            logger.info("All contracts for client id: " + id + " obtained from DB.");
+            logger.info("All contracts for client id: " + user.getUserId() + " obtained from DB.");
             // Else method returns list of contract entities
             return contracts;
         }

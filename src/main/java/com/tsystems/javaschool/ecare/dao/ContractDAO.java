@@ -55,7 +55,7 @@ public class ContractDAO implements IAbstractDAO<Contract>
         return EntityManagerUtil.getEntityManager().createNamedQuery("Contract.getAllContracts", Contract.class).getResultList();
     }
 
-    public List<Contract> getAllContractsForClient(long id) {
+    public List<Contract> getAllContractsForClient(int id) {
         Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Contract.getAllContractsForClient", Contract.class);
         query.setParameter("id", id);
         return query.getResultList();

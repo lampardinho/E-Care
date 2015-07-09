@@ -1,8 +1,7 @@
 package com.tsystems.javaschool.ecare.servlets;
 
 import com.tsystems.javaschool.ecare.entities.Contract;
-import com.tsystems.javaschool.ecare.entities.Option;
-import com.tsystems.javaschool.ecare.entities.Tariff;
+import com.tsystems.javaschool.ecare.services.ContractService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,57 +34,23 @@ public class ClientLobbyServlet extends HttpServlet
         HttpSession session=request.getSession();
 
         List<Contract> contracts = new LinkedList<>();
-        contracts.add(new Contract(34535235));
-        contracts.add(new Contract(65432254));
-        contracts.add(new Contract(87654356));
-        contracts.add(new Contract(23456363));
 
         switch (action)
         {
-            case "get_contracts":
-            {
-
-                request.setAttribute("contracts", contracts);
-                request.getRequestDispatcher("/WEB-INF/jsp/contracts_list.jsp").include(request, response);
-                break;
-            }
             case "select_contract":
             {
-                Contract selectedContract = new Contract(555532);//request.getParameter("phoneNumber");
-                session.setAttribute("currentContract", selectedContract);
-                break;
-            }
-            case "get_current_contract":
-            {
-                Contract currentContract = (Contract)session.getAttribute("currentContract");
-                out.print("Current contract: " + currentContract.getPhoneNumber());
-                break;
-            }
-            case "get_options":
-            {
-                List<Option> options = new LinkedList<>();
-                options.add(new Option("Option 1", 100, 50));
-                options.add(new Option("Option 2", 100, 50));
-                options.add(new Option("Option 3", 100, 50));
-                options.add(new Option("Option 4", 100, 50));
-                request.setAttribute("options", options);
-                request.getRequestDispatcher("/WEB-INF/jsp/options_list.jsp").include(request, response);
-                break;
-            }
-            case "get_tariffs":
-            {
-                List<Tariff> tariffs = new LinkedList<>();
-                tariffs.add(new Tariff("Tariff 1", 100));
-                tariffs.add(new Tariff("Tariff 2", 100));
-                tariffs.add(new Tariff("Tariff 3", 100));
-                tariffs.add(new Tariff("Tariff 4", 100));
-                request.setAttribute("tariffs", tariffs);
-                request.getRequestDispatcher("/WEB-INF/jsp/tariffs_list.jsp").include(request, response);
-                break;
-            }
-            case "get_contract_info":
-            {
-                request.getRequestDispatcher("/WEB-INF/jsp/contract_info.jsp").include(request, response);
+                int phoneNumber = Integer.parseInt(request.getParameter("phoneNumber"));
+                Contract selectedContract = null;
+                try
+                {
+                    selectedContract = ContractService.getInstance().getContractByPhoneNumber(phoneNumber);
+                    session.setAttribute("currentContract", selectedContract);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
                 break;
             }
             case "sign_out":
