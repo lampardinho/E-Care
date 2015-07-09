@@ -7,8 +7,6 @@ import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import java.util.List;
 
@@ -29,7 +27,7 @@ public class ContractService
     private ContractDAO cnDAO = ContractDAO.getInstance();
 
     /*Client service instance for some methods of working with client amount in contract service*/
-    private ClientService clientService = ClientService.getInstance();
+    private UserService userService = UserService.getInstance();
 
     /*Logger for contract service operations*/
     private static Logger logger = Logger.getLogger(ContractService.getInstance().getClass());

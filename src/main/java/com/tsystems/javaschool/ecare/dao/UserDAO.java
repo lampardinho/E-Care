@@ -38,14 +38,14 @@ public class UserDAO implements IAbstractDAO<User>
         return EntityManagerUtil.getEntityManager().find(User.class, id);
     }
 
-    public User findClientByLoginAndPassword(String login, String password) {
+    public User findUserByLoginAndPassword(String login, String password) {
         Query query = EntityManagerUtil.getEntityManager().createNamedQuery("User.findUserByLoginAndPassword", User.class);
         query.setParameter("login", login);
         query.setParameter("password", password);
         return (User) query.getSingleResult();
     }
 
-    public User findClientByNumber(long number) {
+    public User findUserByNumber(long number) {
         Query query = EntityManagerUtil.getEntityManager().createNamedQuery("User.findUserByPhoneNumber", User.class);
         query.setParameter("number", number);
         return (User) query.getSingleResult();
@@ -71,7 +71,7 @@ public class UserDAO implements IAbstractDAO<User>
         return ((Number)EntityManagerUtil.getEntityManager().createNamedQuery("Client.size").getSingleResult()).longValue();
     }
 
-    public User findClientByLogin(String login) {
+    public User findUserByLogin(String login) {
         Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Client.findClientByLogin", User.class);
         query.setParameter("login", login);
         return (User) query.getSingleResult();

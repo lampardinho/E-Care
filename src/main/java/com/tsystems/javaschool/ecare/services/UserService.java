@@ -7,9 +7,6 @@ import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import java.util.List;
 
@@ -19,34 +16,34 @@ import java.util.List;
  *
  */
 
-public class ClientService
+public class UserService
 {
 
     /*Instance of the singleton class*/
-    private static volatile ClientService instance;
+    private static volatile UserService instance;
 
     /*SQL client implementations of abstract DAO class*/
     private IAbstractDAO<User> DAO = UserDAO.getInstance();
-    private UserDAO clDAO = UserDAO.getInstance();
+    private UserDAO userDAO = UserDAO.getInstance();
 
     /*Logger for client service operations*/
-    private static Logger logger = Logger.getLogger(ClientService.getInstance().getClass());
+    private static Logger logger = Logger.getLogger(UserService.getInstance().getClass());
 
     /*Private constructor of singleton class*/
-    private ClientService() {
+    private UserService() {
     }
 
     /**
      * This method return instance of singleton class ClientService.
      * @return instance of class.
      */
-    public static ClientService getInstance() {
-        ClientService localInstance = instance;
+    public static UserService getInstance() {
+        UserService localInstance = instance;
         if (localInstance == null) {
-            synchronized (ClientService.class) {
+            synchronized (UserService.class) {
                 localInstance = instance;
                 if (localInstance == null) {
-                    instance = localInstance = new ClientService();
+                    instance = localInstance = new UserService();
                 }
             }
         }
@@ -143,7 +140,7 @@ public class ClientService
             EntityManagerUtil.beginTransaction();
             try {
                 // Searching of client in the database by DAO method.
-                cl = clDAO.findClientByLoginAndPassword(login, password);
+                cl = userDAO.findUserByLoginAndPassword(login, password);
                 // If client does not exist in database, block try catches the NoResultException and
                 // throws an Exception.
             } catch(NoResultException nrx) {
@@ -181,7 +178,7 @@ public class ClientService
             EntityManagerUtil.beginTransaction();
             try {
                 // Search of client in the database by DAO method.
-                cl = clDAO.findClientByNumber(number);
+                cl = userDAO.findUserByNumber(number);
                 // If client does not exist in database, block try catches the NoResultException and
                 // throws an Exception.
             } catch(NoResultException nrx) {
@@ -312,7 +309,7 @@ public class ClientService
             EntityManagerUtil.beginTransaction();
             try {
                 // Search of client in the database by DAO method.
-                cl = clDAO.findClientByLogin(login);
+                cl = userDAO.findUserByLogin(login);
                 // If client does not exist in database, block try catches the NoResultException and
                 // return false.
             } catch(NoResultException nrx) {

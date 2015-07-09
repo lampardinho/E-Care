@@ -2,7 +2,7 @@ package com.tsystems.javaschool.ecare.services;
 
 import static org.junit.Assert.*;
 
-public class ClientServiceTest
+public class UserServiceTest
 {
 
     @org.junit.Before

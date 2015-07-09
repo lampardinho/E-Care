@@ -1,7 +1,7 @@
 package com.tsystems.javaschool.ecare.servlets;
 
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.services.ClientService;
+import com.tsystems.javaschool.ecare.services.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,10 +26,10 @@ public class LoginServlet extends HttpServlet
         String isAdmin = request.getParameter("isAdmin");
         //out.println(isAdmin);
 
-        ClientService clientService = ClientService.getInstance();
+        UserService userService = UserService.getInstance();
         try
         {
-            User user = clientService.findClient(email, password);
+            User user = userService.findClient(email, password);
             HttpSession session=request.getSession();
             session.setAttribute("user", user);
 
