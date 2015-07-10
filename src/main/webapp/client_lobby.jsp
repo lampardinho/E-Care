@@ -57,7 +57,7 @@
 							<p class="navbar-text" >Select contract:</p>
 							<ul class="nav navbar-nav">
 								<li class="dropdown">
-									<a class="dropdown-toggle" id="current_contract" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= currentContract.getPhoneNumber() %></span></a>
+									<a class="dropdown-toggle" id="current_contract" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= currentContract.getPhoneNumber() %></a>
 									<ul class="dropdown-menu">
 										<c:forEach var="contract" items="${contracts}">
 											<li><a href="#" class="contracts">${contract.phoneNumber}</a></li>
@@ -101,7 +101,7 @@
 						</p>
 						<p class="text-right">
 
-							<button class="btn btn-primary btn-lg" type="button">
+							<button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#myModal">
 								<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
 								<span class="badge">4</span>
 							</button>
@@ -109,6 +109,35 @@
 							<button type="button" class="btn btn-danger btn-lg">
 								<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>Block contract
 							</button>
+
+
+							<!-- Modal -->
+						<div class="modal fade" id="myModal" role="dialog">
+							<div class="modal-dialog">
+
+								<!-- Modal content-->
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal">&times;</button>
+										<h4 class="modal-title">Actions history</h4>
+									</div>
+									<div class="modal-body">
+										<c:forEach var="tariff" items="${tariffs}">
+											<a href="#" class="list-group-item">
+												<p   class="list-group-item-text">${tariff.name}</p>
+												<p   class="list-group-item-text">Price: ${tariff.price}</p>
+											</a>
+										</c:forEach>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-success">Apply</button>
+										<button type="button" class="btn btn-warning">Cancel</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+									</div>
+								</div>
+
+							</div>
+						</div>
 						</p>
 
 					</div>
@@ -121,37 +150,44 @@
 						<h3 class="panel-title">Options</h3>
 					</div>
 					<div class="panel-body">
-						<ul class="list-group">
-							<c:forEach var="option" items="${options}">
-								<c:choose>
-									<c:when test="${currentContract.selectedOptions.contains(option)}">
-										<a href="#" class="list-group-item list-group-item-success">
-											<p   class="list-group-item-text">${option.name}</p>
-											<p   class="list-group-item-text">Connection price: ${option.connectionPrice}</p>
-											<p   class="list-group-item-text">Monthly price: ${option.monthlyPrice}</p>
-										</a>
-									</c:when>
-									<c:when test="${disabledOptions.contains(option)}">
-										<a href="#" class="list-group-item disabled">
-											<p   class="list-group-item-text">${option.name}</p>
-											<p   class="list-group-item-text">Connection price: ${option.connectionPrice}</p>
-											<p   class="list-group-item-text">Monthly price: ${option.monthlyPrice}</p>
-										</a>
-									</c:when>
-									<c:otherwise>
-										<a href="#" class="list-group-item">
-											<p   class="list-group-item-text">${option.name}</p>
-											<p   class="list-group-item-text">Connection price: ${option.connectionPrice}</p>
-											<p   class="list-group-item-text">Monthly price: ${option.monthlyPrice}</p>
-										</a>
-									</c:otherwise>
-								</c:choose>
-							</c:forEach>
-						</ul>
+
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Name</th>
+									<th>Connection price</th>
+									<th>Monthly price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="option" items="${options}">
+									<c:choose>
+										<c:when test="${currentContract.selectedOptions.contains(option)}">
+											<tr class="success">
+										</c:when>
+										<c:when test="${disabledOptions.contains(option)}">
+											<tr class="danger">
+										</c:when>
+										<c:otherwise>
+											<tr>
+										</c:otherwise>
+									</c:choose>
+										<th scope="row">1</th>
+										<td>${option.name}</td>
+										<td>${option.connectionPrice}</td>
+										<td>${option.monthlyPrice}</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
 					</div>
 				</div>
 
-
+				<div class="alert alert-warning alert-dismissible" role="alert">
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<strong>Warning!</strong> Better check yourself, you're not looking too good.
+				</div>
 
 
 				<div id="tariffs" class="panel panel-info">
@@ -159,24 +195,32 @@
 						<h3 class="panel-title">Tariffs</h3>
 					</div>
 					<div class="panel-body">
-						<ul class="list-group">
-							<c:forEach var="tariff" items="${tariffs}">
-								<c:choose>
-									<c:when test="${tariff == currentTariff}">
-										<a href="#" class="list-group-item active">
-											<p   class="list-group-item-text">${tariff.name}</p>
-											<p   class="list-group-item-text">Price: ${tariff.price}</p>
-										</a>
-									</c:when>
-									<c:otherwise>
-										<a href="#" class="list-group-item">
-											<p   class="list-group-item-text">${tariff.name}</p>
-											<p   class="list-group-item-text">Price: ${tariff.price}</p>
-										</a>
-									</c:otherwise>
-								</c:choose>
-							</c:forEach>
-						</ul>
+
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Name</th>
+									<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="tariff" items="${tariffs}">
+									<c:choose>
+										<c:when test="${tariff == currentTariff}">
+											<tr class="success">
+										</c:when>
+										<c:otherwise>
+											<tr>
+										</c:otherwise>
+									</c:choose>
+										<th scope="row">1</th>
+										<td>${tariff.name}</td>
+										<td>${tariff.price}</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
 					</div>
 				</div>
 

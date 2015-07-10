@@ -52,42 +52,49 @@ $('#logout').click(function() {
 $( ".contracts" ).click(function(e) {
     var phoneNumber = $(e.target).text();
     $.get('client_lobby',{action:"select_contract", phoneNumber:phoneNumber},function(responseText) {
-        //var success =  $(responseText).filter("#content");
         var elements = $(responseText);
         var found = $('#content', elements);
-        //alert(found.html())
-        //alert(found.text())
-        //alert(responseText)
         $('#content').replaceWith(found);
         $('#current_contract').text(phoneNumber);
     });
-
-    /*console.log("selected " + $(this).val());
-    var phoneNumber = $(e.target).text();
-    var sendData = {action:"select_contract", phoneNumber:phoneNumber}
-    $.ajax({
-        url: "client_lobby",
-        method: "POST",
-        data: sendData,
-        async: false,
-        success: function (result) {
-            $('#content').load('/WEB-INF/jsp/client_lobby.jsp #content');
-        }
-    });*/
 });
 
 
-
-$("#selectContract").on('change', function () {
-    console.log("selected " + $(this).val());
-    var sendData = {type: "selectContract", number: $(this).val()}
-    $.ajax({
-        url: "/UserUpdateServlet",
-        method: "POST",
-        data: sendData,
-        async: false,
-        success: function (result) {
-            $('#content').load('user.jsp #content');
-        }
+$( "#search" ).click(function(e) {
+    var email = $("#email").text();
+    $.get('admin_lobby',{action:"find_user", email:email},function(responseText) {
+        var elements = $(responseText);
+        var found = $('#content', elements);
+        $('#content').replaceWith(found);
+        $('#current_contract').text(email);
     });
+});
+
+
+$('#clients tbody > tr').click(function() {
+    $(this).addClass("danger");
+});
+
+$('#contracts tbody > tr').click(function() {
+    $('#editContract').modal('show');
+});
+
+$('#tariffs tbody > tr').click(function() {
+    $('#editTariff').modal('show');
+});
+
+$('#options tbody > tr').click(function() {
+    $('#editOption').modal('show');
+});
+
+
+$('#searchUser').click(function() {
+    var email = $('#searchEmail').text();
+
+    var tableRow = $("td").filter(function() {
+        return $(this).text() == email;
+    }).closest("tr");
+
+    $(tableRow).addClass("info");
+    $(tableRow).removeClass("info", 2000);
 });
