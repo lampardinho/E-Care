@@ -39,7 +39,7 @@ public class ContractDAO implements IAbstractDAO<Contract>
         return EntityManagerUtil.getEntityManager().find(Contract.class, id);
     }
 
-    public Contract findContractByNumber(long number) {
+    public Contract findContractByNumber(int number) {
         Query query = EntityManagerUtil.getEntityManager().createNamedQuery("Contract.findContractByNumber", Contract.class);
         query.setParameter("number", number);
         return (Contract) query.getSingleResult();

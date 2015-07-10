@@ -35,6 +35,9 @@ public class Contract
     @Column(name = "phone_number")
     private int phoneNumber;
 
+    @Column(name = "ballance")
+    private int balance;
+
     @ManyToMany
     @JoinTable(name="contract_locking",
             joinColumns=@JoinColumn(name="contract_id"),
@@ -138,4 +141,13 @@ public class Contract
     }
 
 
+    public int getBalance()
+    {
+        return balance;
+    }
+
+    public void setBalance(int balance)
+    {
+        this.balance = balance;
+    }
 }

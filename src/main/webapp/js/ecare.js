@@ -49,6 +49,45 @@ $('#logout').click(function() {
 
 
 
-$( "#other" ).click(function() {
-    $( ".target" ).change();
+$( ".contracts" ).click(function(e) {
+    var phoneNumber = $(e.target).text();
+    $.get('client_lobby',{action:"select_contract", phoneNumber:phoneNumber},function(responseText) {
+        //var success =  $(responseText).filter("#content");
+        var elements = $(responseText);
+        var found = $('#content', elements);
+        //alert(found.html())
+        //alert(found.text())
+        //alert(responseText)
+        $('#content').replaceWith(found);
+        $('#current_contract').text(phoneNumber);
+    });
+
+    /*console.log("selected " + $(this).val());
+    var phoneNumber = $(e.target).text();
+    var sendData = {action:"select_contract", phoneNumber:phoneNumber}
+    $.ajax({
+        url: "client_lobby",
+        method: "POST",
+        data: sendData,
+        async: false,
+        success: function (result) {
+            $('#content').load('/WEB-INF/jsp/client_lobby.jsp #content');
+        }
+    });*/
+});
+
+
+
+$("#selectContract").on('change', function () {
+    console.log("selected " + $(this).val());
+    var sendData = {type: "selectContract", number: $(this).val()}
+    $.ajax({
+        url: "/UserUpdateServlet",
+        method: "POST",
+        data: sendData,
+        async: false,
+        success: function (result) {
+            $('#content').load('user.jsp #content');
+        }
+    });
 });

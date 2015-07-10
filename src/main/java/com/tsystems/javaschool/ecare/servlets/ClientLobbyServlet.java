@@ -1,6 +1,8 @@
 package com.tsystems.javaschool.ecare.servlets;
 
 import com.tsystems.javaschool.ecare.entities.Contract;
+import com.tsystems.javaschool.ecare.entities.Option;
+import com.tsystems.javaschool.ecare.entities.Tariff;
 import com.tsystems.javaschool.ecare.services.ContractService;
 
 import javax.servlet.ServletException;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,7 +25,7 @@ public class ClientLobbyServlet extends HttpServlet
 {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        //doGet(request, response);
+        doGet(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -45,6 +48,21 @@ public class ClientLobbyServlet extends HttpServlet
                 {
                     selectedContract = ContractService.getInstance().getContractByPhoneNumber(phoneNumber);
                     session.setAttribute("currentContract", selectedContract);
+
+                    Tariff currentTariff = selectedContract.getTariff();
+                    session.setAttribute("currentTariff", currentTariff);
+
+                    Collection<Option> options = currentTariff.getAvailableOptions();
+                    session.setAttribute("options", options);
+
+                    Collection<Option> disabledOptions = new LinkedList<>();
+                    for (Option option : selectedContract.getSelectedOptions())
+                    {
+                        disabledOptions.addAll(option.getLockedOptions());
+                    }
+                    session.setAttribute("disabledOptions", disabledOptions);
+
+                    request.getRequestDispatcher("client_lobby.jsp").include(request, response);
                 }
                 catch (Exception e)
                 {

@@ -70,7 +70,7 @@ public class LoginServlet extends HttpServlet
             }
             else
             {
-                request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
+                request.getRequestDispatcher("client_lobby.jsp").include(request, response);
             }
         }
         catch (Exception e)
