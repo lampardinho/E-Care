@@ -1,10 +1,8 @@
 package com.tsystems.javaschool.ecare.entities;
 
-import javax.jws.soap.SOAPBinding;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -14,12 +12,12 @@ import java.util.Set;
 @Table(name = "users", schema = "", catalog = "ecare")
 @NamedQueries(
         {
-                @NamedQuery (name = "User.getAllUsers", query = "SELECT c FROM User c"),
-                @NamedQuery (name = "User.findUserByLoginAndPassword", query = "SELECT c FROM User c WHERE c.email = :login AND c.password = :password"),
-                @NamedQuery (name = "User.findUserByPhoneNumber", query = "SELECT cn.user FROM Contract cn WHERE cn.phoneNumber = :number"),
-                @NamedQuery (name = "Client.findClientByLogin", query = "SELECT c FROM User c WHERE c.email = :login"),
-                @NamedQuery (name = "Client.deleteAllClients", query = "DELETE FROM User WHERE isAdmin = 0"),
-                @NamedQuery (name = "Client.size", query="SELECT count(c) FROM User c WHERE c.isAdmin = 0")
+                @NamedQuery(name = "User.getAllUsers", query = "SELECT c FROM User c"),
+                @NamedQuery(name = "User.findUserByLoginAndPassword", query = "SELECT c FROM User c WHERE c.email = :login AND c.password = :password"),
+                @NamedQuery(name = "User.findUserByPhoneNumber", query = "SELECT cn.user FROM Contract cn WHERE cn.phoneNumber = :number"),
+                @NamedQuery(name = "Client.findClientByLogin", query = "SELECT c FROM User c WHERE c.email = :login"),
+                @NamedQuery(name = "Client.deleteAllClients", query = "DELETE FROM User WHERE isAdmin = 0"),
+                @NamedQuery(name = "Client.size", query = "SELECT count(c) FROM User c WHERE c.isAdmin = 0")
         })
 public class User implements Serializable
 {
@@ -53,120 +51,14 @@ public class User implements Serializable
     private byte isAdmin;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="contract_locking",
-            joinColumns=@JoinColumn(name="locker_id"),
-            inverseJoinColumns=@JoinColumn(name="contract_id"))
+    @JoinTable(name = "contract_locking",
+            joinColumns = @JoinColumn(name = "locker_id"),
+            inverseJoinColumns = @JoinColumn(name = "contract_id"))
     private Set<Contract> lockedContracts;
 
-    public int getUserId()
+    public User()
     {
-        return userId;
     }
-
-    public void setUserId(int userId)
-    {
-        this.userId = userId;
-    }
-
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-
-    public String getSurname()
-    {
-        return surname;
-    }
-
-    public void setSurname(String surname)
-    {
-        this.surname = surname;
-    }
-
-
-    public Date getBirthDate()
-    {
-        return birthDate;
-    }
-
-    public void setBirthDate(Date birthDate)
-    {
-        this.birthDate = birthDate;
-    }
-
-
-    public String getPassportData()
-    {
-        return passportData;
-    }
-
-    public void setPassportData(String passportData)
-    {
-        this.passportData = passportData;
-    }
-
-
-    public String getAddress()
-    {
-        return address;
-    }
-
-    public void setAddress(String address)
-    {
-        this.address = address;
-    }
-
-
-    public String getEmail()
-    {
-        return email;
-    }
-
-    public void setEmail(String email)
-    {
-        this.email = email;
-    }
-
-
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
-
-
-    public boolean getIsAdmin()
-    {
-        return isAdmin != 0;
-    }
-
-    public void setIsAdmin(boolean isAdmin)
-    {
-        this.isAdmin = (isAdmin) ? (byte)1 : 0;
-    }
-
-    public Set<Contract> getLockedContracts()
-    {
-        return lockedContracts;
-    }
-
-    public void setLockedContracts(Set<Contract> lockedContracts)
-    {
-        this.lockedContracts = lockedContracts;
-    }
-
-    public User(){}
 
     public User(String name, String surname, Date birthDate,
                 String passportData, String address, String email,
@@ -180,6 +72,106 @@ public class User implements Serializable
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
+    }
+
+    public int getUserId()
+    {
+        return userId;
+    }
+
+    public void setUserId(int userId)
+    {
+        this.userId = userId;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getSurname()
+    {
+        return surname;
+    }
+
+    public void setSurname(String surname)
+    {
+        this.surname = surname;
+    }
+
+    public Date getBirthDate()
+    {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate)
+    {
+        this.birthDate = birthDate;
+    }
+
+    public String getPassportData()
+    {
+        return passportData;
+    }
+
+    public void setPassportData(String passportData)
+    {
+        this.passportData = passportData;
+    }
+
+    public String getAddress()
+    {
+        return address;
+    }
+
+    public void setAddress(String address)
+    {
+        this.address = address;
+    }
+
+    public String getEmail()
+    {
+        return email;
+    }
+
+    public void setEmail(String email)
+    {
+        this.email = email;
+    }
+
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
+
+    public boolean getIsAdmin()
+    {
+        return isAdmin != 0;
+    }
+
+    public void setIsAdmin(boolean isAdmin)
+    {
+        this.isAdmin = (isAdmin) ? (byte) 1 : 0;
+    }
+
+    public Set<Contract> getLockedContracts()
+    {
+        return lockedContracts;
+    }
+
+    public void setLockedContracts(Set<Contract> lockedContracts)
+    {
+        this.lockedContracts = lockedContracts;
     }
 
     @Override
@@ -217,7 +209,6 @@ public class User implements Serializable
         result = 31 * result + (int) isAdmin;
         return result;
     }
-
 
 
 }

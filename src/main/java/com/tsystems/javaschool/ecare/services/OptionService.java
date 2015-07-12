@@ -3,19 +3,15 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.dao.OptionDAO;
 import com.tsystems.javaschool.ecare.entities.Option;
-import com.tsystems.javaschool.ecare.util.ECareException;
+import com.tsystems.javaschool.ecare.util.AppException;
 import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.util.List;
 
 /**
  * This class is the implementation of IOptionService for working with option DAO
  * and option entities. Class OptionService is a singleton.
- *
  */
 
 public class OptionService
@@ -23,16 +19,15 @@ public class OptionService
 
     /*Instance of the singleton class*/
     private static volatile OptionService instance;
-
+    /*Logger for option service operations*/
+    private static Logger logger = Logger.getLogger(OptionService.getInstance().getClass());
     /*SQL option implementations of abstract DAO class*/
     private IAbstractDAO<Option> DAO = OptionDAO.getInstance();
     private OptionDAO opDAO = OptionDAO.getInstance();
 
-    /*Logger for option service operations*/
-    private static Logger logger = Logger.getLogger(OptionService.getInstance().getClass());
-
     /*Private constructor of singleton class*/
-    private OptionService() {
+    private OptionService()
+    {
     }
 
     /**
@@ -40,12 +35,16 @@ public class OptionService
      *
      * @return instance of class.
      */
-    public static OptionService getInstance() {
+    public static OptionService getInstance()
+    {
         OptionService localInstance = instance;
-        if (localInstance == null) {
-            synchronized (OptionService.class) {
+        if (localInstance == null)
+        {
+            synchronized (OptionService.class)
+            {
                 localInstance = instance;
-                if (localInstance == null) {
+                if (localInstance == null)
+                {
                     instance = localInstance = new OptionService();
                 }
             }
@@ -58,31 +57,33 @@ public class OptionService
      *
      * @param op option entity to be saved or updated.
      * @return saved or updated option entity.
-     * @throws ECareException if an error occurred during saving or updating of entity
-     * and DAO returns null.
+     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during saving or updating of entity
+     *                        and DAO returns null.
      */
-    public Option saveOrUpdateOption(Option op) throws ECareException {
+    public Option saveOrUpdateOption(Option op) throws AppException
+    {
         logger.info("Save/update option " + op + " in DB.");
-        try {
+        try
+        {
             EntityManagerUtil.beginTransaction();
             Option option = DAO.saveOrUpdate(op);
             EntityManagerUtil.commit();
             //If DAO returns null method will throws an ECareException
-            if(option == null) {
-                ECareException ecx = new ECareException("Failed to save/update option " + op + " in DB.");
+            if (option == null)
+            {
+                AppException ecx = new AppException("Failed to save/update option " + op + " in DB.");
                 logger.error(ecx.getMessage(), ecx);
                 throw ecx;
             }
             logger.info("Option " + option + " saved in DB.");
             //else option will be saved and method returns option entity
             return option;
-        }
-        catch (RuntimeException re) {
-            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+        } catch (RuntimeException re)
+        {
+            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
-        }
-        finally
+        } finally
         {
             EntityManagerUtil.closeEntityManager();
         }
@@ -93,32 +94,33 @@ public class OptionService
      *
      * @param id option id for search that option in the database.
      * @return loaded option entity.
-     * @throws ECareException if an error occurred during loading of entity
-     * and DAO returns null.
+     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during loading of entity
+     *                        and DAO returns null.
      */
-    public Option loadOption(int id) throws ECareException
+    public Option loadOption(int id) throws AppException
     {
         logger.info("Load option with id: " + id + " from DB.");
-        try {
+        try
+        {
             EntityManagerUtil.beginTransaction();
             Option op = DAO.load(id);
             EntityManagerUtil.commit();
             //If DAO returns null method will throws an ECareException
-            if(op == null) {
-                ECareException ecx = new ECareException("Option with id = " + id + " not found in DB.");
+            if (op == null)
+            {
+                AppException ecx = new AppException("Option with id = " + id + " not found in DB.");
                 logger.warn(String.valueOf(ecx), ecx);
                 throw ecx;
             }
             logger.info("Options " + op + " loaded from DB.");
             //else method returns option entity
             return op;
-        }
-        catch (RuntimeException re) {
-            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+        } catch (RuntimeException re)
+        {
+            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
-        }
-        finally
+        } finally
         {
             EntityManagerUtil.closeEntityManager();
         }
@@ -128,17 +130,20 @@ public class OptionService
      * This method implements deleting of option from the database.
      *
      * @param id option id for deleting that option from the database.
-     * @throws ECareException if an error occurred during intermediate loading
-     * of entity and DAO returns null.
+     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during intermediate loading
+     *                        of entity and DAO returns null.
      */
-    public void deleteOption(int id) throws ECareException {
+    public void deleteOption(int id) throws AppException
+    {
         logger.info("Delete option with id: " + id + " from DB.");
-        try {
+        try
+        {
             EntityManagerUtil.beginTransaction();
             Option op = DAO.load(id);
             //If DAO returns null method will throws an ECareException
-            if(op == null) {
-                ECareException ecx = new ECareException("Option with id = " + id + " not exist.");
+            if (op == null)
+            {
+                AppException ecx = new AppException("Option with id = " + id + " not exist.");
                 logger.warn(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -146,13 +151,12 @@ public class OptionService
             DAO.delete(op);
             EntityManagerUtil.commit();
             logger.info("Option " + op + " deleted from DB.");
-        }
-        catch (RuntimeException re) {
-            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+        } catch (RuntimeException re)
+        {
+            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
-        }
-        finally
+        } finally
         {
             EntityManagerUtil.closeEntityManager();
         }
@@ -162,31 +166,33 @@ public class OptionService
      * This method implements receiving of all options from the database.
      *
      * @return list of received options.
-     * @throws ECareException if an error occurred during receiving of entities
-     * and DAO returns null.
+     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during receiving of entities
+     *                        and DAO returns null.
      */
-    public List<Option> getAllOptions() throws ECareException {
+    public List<Option> getAllOptions() throws AppException
+    {
         logger.info("Get all options from DB.");
-        try {
+        try
+        {
             EntityManagerUtil.beginTransaction();
             List<Option> options = DAO.getAll();
             EntityManagerUtil.commit();
             //If DAO returns null method will throws an ECareException
-            if(options == null) {
-                ECareException ecx = new ECareException("Failed to get all options from DB.");
+            if (options == null)
+            {
+                AppException ecx = new AppException("Failed to get all options from DB.");
                 logger.error(ecx.getMessage(), ecx);
                 throw ecx;
             }
             logger.info("All options obtained from DB.");
             // Else method returns list of option entities
             return options;
-        }
-        catch (RuntimeException re) {
-            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+        } catch (RuntimeException re)
+        {
+            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
-        }
-        finally
+        } finally
         {
             EntityManagerUtil.closeEntityManager();
         }
@@ -197,31 +203,33 @@ public class OptionService
      *
      * @param id contract id for searching of all options for this contract.
      * @return list of received options.
-     * @throws ECareException if an error occurred during receiving of entities
-     * and DAO returns null.
+     * @throws com.tsystems.javaschool.ecare.util.AppException if an error occurred during receiving of entities
+     *                        and DAO returns null.
      */
-    public List<Option> getAllOptionsForTariff(long id) throws ECareException{
+    public List<Option> getAllOptionsForTariff(long id) throws AppException
+    {
         logger.info("Get all options from DB for tariff with id: " + id + ".");
-        try {
+        try
+        {
             EntityManagerUtil.beginTransaction();
             List<Option> options = opDAO.getAllOptionsForTariff(id);
             EntityManagerUtil.commit();
             //If DAO returns null method will throws an ECareException
-            if(options == null) {
-                ECareException ecx = new ECareException("Failed to get all options from DB for tariff id: " + id + ".");
+            if (options == null)
+            {
+                AppException ecx = new AppException("Failed to get all options from DB for tariff id: " + id + ".");
                 logger.error(ecx.getMessage(), ecx);
                 throw ecx;
             }
             logger.info("All options for tariff id: " + id + " obtained from DB.");
             // Else method returns list of option entities
             return options;
-        }
-        catch (RuntimeException re) {
-            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+        } catch (RuntimeException re)
+        {
+            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
-        }
-        finally
+        } finally
         {
             EntityManagerUtil.closeEntityManager();
         }
@@ -232,20 +240,21 @@ public class OptionService
      *
      * @param id tariff id for deleting of all options for this tariff.
      */
-    public void deleteAllOptionsForTariff(long id) {
+    public void deleteAllOptionsForTariff(long id)
+    {
         logger.info("Delete all options from DB for tariff with id: " + id + ".");
-        try {
+        try
+        {
             EntityManagerUtil.beginTransaction();
             opDAO.deleteAllOptionsForTariff(id);
             EntityManagerUtil.commit();
             logger.info("All options for tariff id: " + id + " deleted from DB.");
-        }
-        catch (RuntimeException re) {
-            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+        } catch (RuntimeException re)
+        {
+            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
-        }
-        finally
+        } finally
         {
             EntityManagerUtil.closeEntityManager();
         }
@@ -256,21 +265,22 @@ public class OptionService
      *
      * @return number of options in the storage.
      */
-    public long getNumberOfOptions() {
+    public long getNumberOfOptions()
+    {
         logger.info("Get number of options in DB.");
-        try {
+        try
+        {
             EntityManagerUtil.beginTransaction();
             long number = DAO.getCount();
             EntityManagerUtil.commit();
             logger.info(number + "of options obtained from DB.");
             return number;
-        }
-        catch (RuntimeException re) {
-            if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
+        } catch (RuntimeException re)
+        {
+            if (EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
-        }
-        finally
+        } finally
         {
             EntityManagerUtil.closeEntityManager();
         }

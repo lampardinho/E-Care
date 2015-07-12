@@ -220,7 +220,7 @@
 													<div class="form-group">
 														<label for="user_firstName" class="col-sm-2 control-label">First name</label>
 														<div class="col-sm-10">
-															<input type="text" class="form-control" id="user_firstName" placeholder="First name">
+															<input type="text" class="form-control" id="user_firstName" placeholder="First name" required>
 														</div>
 													</div>
 													<div class="form-group">
@@ -260,6 +260,12 @@
 														</div>
 													</div>
 													<div class="form-group">
+														<label for="user_password2" class="col-sm-2 control-label">Repeat password</label>
+														<div class="col-sm-10">
+															<input type="password" class="form-control" id="user_password2" placeholder="Password">
+														</div>
+													</div>
+													<div class="form-group">
 														<div class="col-sm-offset-2 col-sm-10">
 															<div class="checkbox">
 																<label>
@@ -268,11 +274,7 @@
 															</div>
 														</div>
 													</div>
-													<%--<div class="form-group">
-														<div class="col-sm-offset-2 col-sm-10">
-															<button type="submit" class="btn btn-success">Create user</button>
-														</div>
-													</div>--%>
+
 												</form>
 											</div>
 											<div class="modal-footer">

@@ -2,7 +2,6 @@ package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,9 +11,9 @@ import java.util.Set;
 @Table(name = "tariffs", schema = "", catalog = "ecare")
 @NamedQueries(
         {
-                @NamedQuery (name = "Tariff.getAllTariffs", query = "SELECT t FROM Tariff t"),
-                @NamedQuery (name = "Tariff.deleteAllTariffs", query = "DELETE FROM Tariff"),
-                @NamedQuery (name = "Tariff.size", query="SELECT count(t) FROM Tariff t")
+                @NamedQuery(name = "Tariff.getAllTariffs", query = "SELECT t FROM Tariff t"),
+                @NamedQuery(name = "Tariff.deleteAllTariffs", query = "DELETE FROM Tariff"),
+                @NamedQuery(name = "Tariff.size", query = "SELECT count(t) FROM Tariff t")
         })
 public class Tariff implements Serializable
 {
@@ -30,10 +29,21 @@ public class Tariff implements Serializable
     private int price;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="available_options",
-            joinColumns=@JoinColumn(name="tariff_id", referencedColumnName="tariff_id"),
-            inverseJoinColumns=@JoinColumn(name="option_id", referencedColumnName="option_id"))
+    @JoinTable(name = "available_options",
+            joinColumns = @JoinColumn(name = "tariff_id", referencedColumnName = "tariff_id"),
+            inverseJoinColumns = @JoinColumn(name = "option_id", referencedColumnName = "option_id"))
     private Set<Option> availableOptions;
+
+    public Tariff()
+    {
+    }
+
+    public Tariff(String name, int price, Set<Option> availableOptions)
+    {
+        this.name = name;
+        this.price = price;
+        this.availableOptions = availableOptions;
+    }
 
     public int getTariffId()
     {
@@ -45,7 +55,6 @@ public class Tariff implements Serializable
         this.tariffId = tariffId;
     }
 
-
     public String getName()
     {
         return name;
@@ -55,7 +64,6 @@ public class Tariff implements Serializable
     {
         this.name = name;
     }
-
 
     public int getPrice()
     {
@@ -67,7 +75,6 @@ public class Tariff implements Serializable
         this.price = price;
     }
 
-
     public Set<Option> getAvailableOptions()
     {
         return availableOptions;
@@ -75,15 +82,6 @@ public class Tariff implements Serializable
 
     public void setAvailableOptions(Set<Option> availableOptions)
     {
-        this.availableOptions = availableOptions;
-    }
-
-    public Tariff(){}
-
-    public Tariff(String name, int price, Set<Option> availableOptions)
-    {
-        this.name = name;
-        this.price = price;
         this.availableOptions = availableOptions;
     }
 

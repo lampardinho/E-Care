@@ -25,14 +25,13 @@ public class AuthorizationFilter implements Filter
         HttpServletResponse httpRes = (HttpServletResponse) response;
 
         HttpSession session = httpReq.getSession();
-        User currentUser = (User)session.getAttribute("user");
+        User currentUser = (User) session.getAttribute("user");
 
         if (currentUser == null)
         {
             httpRes.sendRedirect("login.jsp");
             System.out.println("redirect");
-        }
-        else
+        } else
         {
             chain.doFilter(request, response);
             System.out.println("filter");

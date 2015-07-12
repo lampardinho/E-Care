@@ -15,7 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Kolia on 06.07.2015.
@@ -25,9 +28,9 @@ public class ClientLobbyServlet extends HttpServlet
 {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        HttpSession session=request.getSession();
+        HttpSession session = request.getSession();
 
-        User user = (User)session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
 
         try
         {
@@ -69,13 +72,11 @@ public class ClientLobbyServlet extends HttpServlet
             session.setAttribute("disabledOptions", disabledOptions);
 
 
-
             List<String> actionsHistory = new LinkedList<>();
             session.setAttribute("actionsHistory", actionsHistory);
 
             session.setAttribute("balance", currentContract.getBalance());
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -89,7 +90,7 @@ public class ClientLobbyServlet extends HttpServlet
         String action = request.getParameter("action");
         System.out.println(action);
 
-        HttpSession session=request.getSession();
+        HttpSession session = request.getSession();
 
 
         switch (action)
@@ -99,7 +100,7 @@ public class ClientLobbyServlet extends HttpServlet
                 int phoneNumber = Integer.parseInt(request.getParameter("phoneNumber"));
                 try
                 {
-                    List<Contract> contracts = (List<Contract>)session.getAttribute("contracts");
+                    List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
                     Contract selectedContract = null;
                     for (Contract contract : contracts)
                     {
@@ -135,8 +136,7 @@ public class ClientLobbyServlet extends HttpServlet
                     session.setAttribute("balance", selectedContract.getBalance());
 
                     request.getRequestDispatcher("/WEB-INF/jsp/client_lobby.jsp").include(request, response);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -147,9 +147,9 @@ public class ClientLobbyServlet extends HttpServlet
             {
                 String tariffName = request.getParameter("tariffName");
 
-                Contract contract = (Contract)session.getAttribute("currentContract");
-                List<Tariff> tariffs = (List<Tariff>)session.getAttribute("tariffs");
-                List<String> actionsHistory = (List<String>)session.getAttribute("actionsHistory");
+                Contract contract = (Contract) session.getAttribute("currentContract");
+                List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
+                List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
 
                 for (Tariff tariff : tariffs)
                     if (tariff.getName().equals(tariffName))
@@ -168,7 +168,6 @@ public class ClientLobbyServlet extends HttpServlet
                 session.setAttribute("currentContract", contract);
 
 
-
                 List<Option> disabledOptions = new LinkedList<>();
                 session.setAttribute("disabledOptions", disabledOptions);
 
@@ -181,8 +180,8 @@ public class ClientLobbyServlet extends HttpServlet
             {
                 String optionName = request.getParameter("optionName");
 
-                Contract contract = (Contract)session.getAttribute("currentContract");
-                List<String> actionsHistory = (List<String>)session.getAttribute("actionsHistory");
+                Contract contract = (Contract) session.getAttribute("currentContract");
+                List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
 
                 Set<Option> selectedOptions = contract.getSelectedOptions();
                 System.out.println(selectedOptions.size());
@@ -215,8 +214,8 @@ public class ClientLobbyServlet extends HttpServlet
             {
                 String optionName = request.getParameter("optionName");
 
-                Contract contract = (Contract)session.getAttribute("currentContract");
-                List<String> actionsHistory = (List<String>)session.getAttribute("actionsHistory");
+                Contract contract = (Contract) session.getAttribute("currentContract");
+                List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
 
                 for (Option option : contract.getTariff().getAvailableOptions())
                 {
@@ -244,11 +243,11 @@ public class ClientLobbyServlet extends HttpServlet
             }
             case "block":
             {
-                Contract contract = (Contract)session.getAttribute("currentContract");
-                List<String> actionsHistory = (List<String>)session.getAttribute("actionsHistory");
+                Contract contract = (Contract) session.getAttribute("currentContract");
+                List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
 
                 Set<User> blockers = contract.getLockedByUsers();
-                User user = (User)session.getAttribute("user");
+                User user = (User) session.getAttribute("user");
                 blockers.add(user);
                 contract.setLockedByUsers(blockers);
 
@@ -261,8 +260,8 @@ public class ClientLobbyServlet extends HttpServlet
             }
             case "unblock":
             {
-                Contract contract = (Contract)session.getAttribute("currentContract");
-                List<String> actionsHistory = (List<String>)session.getAttribute("actionsHistory");
+                Contract contract = (Contract) session.getAttribute("currentContract");
+                List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
 
                 Set<User> blockers = contract.getLockedByUsers();
                 User user = (User) session.getAttribute("user");
@@ -279,8 +278,8 @@ public class ClientLobbyServlet extends HttpServlet
             }
             case "apply_changes":
             {
-                List<Contract> contracts = (List<Contract>)session.getAttribute("contracts");
-                List<String> actionsHistory = (List<String>)session.getAttribute("actionsHistory");
+                List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
+                List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
                 try
                 {
                     for (Contract contract : contracts)
@@ -288,8 +287,7 @@ public class ClientLobbyServlet extends HttpServlet
                         ContractService.getInstance().saveOrUpdateContract(contract);
                     }
                     actionsHistory.clear();
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -301,12 +299,12 @@ public class ClientLobbyServlet extends HttpServlet
             {
                 try
                 {
-                    User user = (User)session.getAttribute("user");
+                    User user = (User) session.getAttribute("user");
                     List<Contract> contracts = ContractService.getInstance().getUserContracts(user);
                     session.setAttribute("contracts", contracts);
 
                     Contract currentContract = null;
-                    Contract contract = (Contract)session.getAttribute("currentContract");
+                    Contract contract = (Contract) session.getAttribute("currentContract");
                     for (Contract c : contracts)
                     {
                         if (c.getPhoneNumber() == contract.getPhoneNumber())
@@ -337,13 +335,11 @@ public class ClientLobbyServlet extends HttpServlet
                     session.setAttribute("disabledOptions", disabledOptions);
 
 
-
                     List<String> actionsHistory = new LinkedList<>();
                     session.setAttribute("actionsHistory", actionsHistory);
 
                     session.setAttribute("balance", currentContract.getBalance());
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }

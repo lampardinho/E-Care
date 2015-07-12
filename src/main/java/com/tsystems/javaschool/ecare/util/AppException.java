@@ -3,7 +3,7 @@ package com.tsystems.javaschool.ecare.util;
 /**
  * Class of own application exception.
  */
-public class ECareException extends RuntimeException {
+public class AppException extends RuntimeException {
 
     /*Field of exception message*/
     String message;
@@ -13,7 +13,7 @@ public class ECareException extends RuntimeException {
      *
      * @param message string message.
      */
-    public ECareException(String message) {
+    public AppException(String message) {
         super(message);
         this.message = message;
     }
@@ -23,7 +23,7 @@ public class ECareException extends RuntimeException {
      * @param message string message.
      * @param e exception.
      */
-    public ECareException(String message, Throwable e) {
+    public AppException(String message, Throwable e) {
         super(message, e);
         this.message = message;
     }

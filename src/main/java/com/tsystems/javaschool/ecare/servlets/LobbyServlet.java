@@ -1,12 +1,6 @@
 package com.tsystems.javaschool.ecare.servlets;
 
-import com.tsystems.javaschool.ecare.dao.TariffDAO;
-import com.tsystems.javaschool.ecare.entities.Contract;
-import com.tsystems.javaschool.ecare.entities.Option;
-import com.tsystems.javaschool.ecare.entities.Tariff;
 import com.tsystems.javaschool.ecare.entities.User;
-import com.tsystems.javaschool.ecare.services.ContractService;
-import com.tsystems.javaschool.ecare.services.TariffService;
 import com.tsystems.javaschool.ecare.services.UserService;
 
 import javax.servlet.ServletException;
@@ -17,9 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Kolia on 01.07.2015.
@@ -38,23 +29,20 @@ public class LobbyServlet extends HttpServlet
         UserService userService = UserService.getInstance();
         try
         {
-            HttpSession session=request.getSession();
+            HttpSession session = request.getSession();
 
             User user = userService.findClient(email, password);
             session.setAttribute("user", user);
 
 
-
             if (isAdmin != null)
             {
                 request.getRequestDispatcher("admin_lobby").include(request, response);
-            }
-            else
+            } else
             {
                 request.getRequestDispatcher("client_lobby").include(request, response);
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             e.printStackTrace();
         }

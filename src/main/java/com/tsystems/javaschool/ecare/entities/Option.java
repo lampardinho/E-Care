@@ -2,7 +2,6 @@ package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -12,12 +11,12 @@ import java.util.Set;
 @Table(name = "options", schema = "", catalog = "ecare")
 @NamedQueries(
         {
-                @NamedQuery (name = "Option.getAllOptions", query = "SELECT o FROM Option o"),
-                @NamedQuery (name = "Option.findOptionByTitleAndTariffId", query = "SELECT o FROM Option o WHERE o.name = :title"),
-                @NamedQuery (name = "Option.getAllOptionsForTariff", query = "SELECT o FROM Option o"),
-                @NamedQuery (name = "Option.deleteAllOptions", query = "DELETE FROM Option"),
-                @NamedQuery (name = "Option.deleteAllOptionsForTariff", query = "DELETE FROM Option"),
-                @NamedQuery (name = "Option.size", query="SELECT count(o) FROM Option o")
+                @NamedQuery(name = "Option.getAllOptions", query = "SELECT o FROM Option o"),
+                @NamedQuery(name = "Option.findOptionByTitleAndTariffId", query = "SELECT o FROM Option o WHERE o.name = :title"),
+                @NamedQuery(name = "Option.getAllOptionsForTariff", query = "SELECT o FROM Option o"),
+                @NamedQuery(name = "Option.deleteAllOptions", query = "DELETE FROM Option"),
+                @NamedQuery(name = "Option.deleteAllOptionsForTariff", query = "DELETE FROM Option"),
+                @NamedQuery(name = "Option.size", query = "SELECT count(o) FROM Option o")
         })
 public class Option implements Serializable
 {
@@ -36,11 +35,22 @@ public class Option implements Serializable
     private int monthlyPrice;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="option_locking",
-            joinColumns=@JoinColumn(name="selected_option_id"),
-            inverseJoinColumns=@JoinColumn(name="locked_option_id"))
+    @JoinTable(name = "option_locking",
+            joinColumns = @JoinColumn(name = "selected_option_id"),
+            inverseJoinColumns = @JoinColumn(name = "locked_option_id"))
     private Set<Option> lockedOptions;
 
+
+    public Option()
+    {
+    }
+
+    public Option(String name, int connectionPrice, int monthlyPrice)
+    {
+        this.name = name;
+        this.connectionPrice = connectionPrice;
+        this.monthlyPrice = monthlyPrice;
+    }
 
     public int getOptionId()
     {
@@ -52,7 +62,6 @@ public class Option implements Serializable
         this.optionId = optionId;
     }
 
-
     public String getName()
     {
         return name;
@@ -63,7 +72,6 @@ public class Option implements Serializable
         this.name = name;
     }
 
-
     public int getConnectionPrice()
     {
         return connectionPrice;
@@ -73,7 +81,6 @@ public class Option implements Serializable
     {
         this.connectionPrice = connectionPrice;
     }
-
 
     public int getMonthlyPrice()
     {
@@ -93,15 +100,6 @@ public class Option implements Serializable
     public void setLockedOptions(Set<Option> lockedOptions)
     {
         this.lockedOptions = lockedOptions;
-    }
-
-    public Option(){}
-
-    public Option(String name, int connectionPrice, int monthlyPrice)
-    {
-        this.name = name;
-        this.connectionPrice = connectionPrice;
-        this.monthlyPrice = monthlyPrice;
     }
 
     @Override
@@ -129,7 +127,6 @@ public class Option implements Serializable
         result = 31 * result + monthlyPrice;
         return result;
     }
-
 
 
 }

@@ -3,8 +3,6 @@ package com.tsystems.javaschool.ecare.entities;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
-import java.util.LinkedList;
 import java.util.Set;
 
 /**
@@ -14,12 +12,12 @@ import java.util.Set;
 @Table(name = "contracts", schema = "", catalog = "ecare")
 @NamedQueries(
         {
-                @NamedQuery (name = "Contract.getAllContracts", query = "SELECT c FROM Contract c"),
-                @NamedQuery (name = "Contract.findContractByNumber", query = "SELECT c FROM Contract c WHERE c.phoneNumber = :number"),
-                @NamedQuery (name = "Contract.getAllContractsForClient", query = "SELECT c FROM Contract c WHERE c.user.id = :id"),
-                @NamedQuery (name = "Contract.deleteAllContracts", query="DELETE FROM Contract"),
-                @NamedQuery (name = "Contract.deleteAllContractsForClient", query = "DELETE FROM Contract WHERE user.id = ?1"),
-                @NamedQuery (name = "Contract.size", query="SELECT count(c) FROM Contract c")
+                @NamedQuery(name = "Contract.getAllContracts", query = "SELECT c FROM Contract c"),
+                @NamedQuery(name = "Contract.findContractByNumber", query = "SELECT c FROM Contract c WHERE c.phoneNumber = :number"),
+                @NamedQuery(name = "Contract.getAllContractsForClient", query = "SELECT c FROM Contract c WHERE c.user.id = :id"),
+                @NamedQuery(name = "Contract.deleteAllContracts", query = "DELETE FROM Contract"),
+                @NamedQuery(name = "Contract.deleteAllContractsForClient", query = "DELETE FROM Contract WHERE user.id = ?1"),
+                @NamedQuery(name = "Contract.size", query = "SELECT count(c) FROM Contract c")
         })
 public class Contract implements Serializable
 {
@@ -29,11 +27,11 @@ public class Contract implements Serializable
     private int contractId;
 
     @ManyToOne
-    @JoinColumn(name="user_id", referencedColumnName="user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name="tariff_id", referencedColumnName="tariff_id")
+    @JoinColumn(name = "tariff_id", referencedColumnName = "tariff_id")
     private Tariff tariff;
 
     @Column(name = "phone_number")
@@ -43,16 +41,30 @@ public class Contract implements Serializable
     private int balance;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="contract_locking",
-            joinColumns=@JoinColumn(name="contract_id"),
-            inverseJoinColumns=@JoinColumn(name="locker_id"))
+    @JoinTable(name = "contract_locking",
+            joinColumns = @JoinColumn(name = "contract_id"),
+            inverseJoinColumns = @JoinColumn(name = "locker_id"))
     private Set<User> lockedByUsers;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="selected_options",
-            joinColumns=@JoinColumn(name="contract_id"),
-            inverseJoinColumns=@JoinColumn(name="option_id"))
+    @JoinTable(name = "selected_options",
+            joinColumns = @JoinColumn(name = "contract_id"),
+            inverseJoinColumns = @JoinColumn(name = "option_id"))
     private Set<Option> selectedOptions;
+
+    public Contract()
+    {
+    }
+
+    public Contract(User user, Tariff tariff, int phoneNumber, int balance)
+    {
+        this.user = user;
+        this.tariff = tariff;
+        this.phoneNumber = phoneNumber;
+        this.balance = balance;
+        this.lockedByUsers = new HashSet<>();
+        this.selectedOptions = new HashSet<>();
+    }
 
     public int getContractId()
     {
@@ -64,7 +76,6 @@ public class Contract implements Serializable
         this.contractId = contractId;
     }
 
-
     public User getUser()
     {
         return user;
@@ -74,7 +85,6 @@ public class Contract implements Serializable
     {
         this.user = user;
     }
-
 
     public Tariff getTariff()
     {
@@ -114,18 +124,6 @@ public class Contract implements Serializable
     public void setSelectedOptions(Set<Option> selectedOptions)
     {
         this.selectedOptions = selectedOptions;
-    }
-
-    public Contract(){}
-
-    public Contract(User user, Tariff tariff, int phoneNumber, int balance)
-    {
-        this.user = user;
-        this.tariff = tariff;
-        this.phoneNumber = phoneNumber;
-        this.balance = balance;
-        this.lockedByUsers = new HashSet<>();
-        this.selectedOptions = new HashSet<>();
     }
 
     @Override

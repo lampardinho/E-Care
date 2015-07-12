@@ -9,9 +9,10 @@
     </layout>
   </appender>
 
+
   <root>
-    <level value="All" />
-    <appender-ref ref="LOG-FILE-APPENDER" />
+    <priority value="All"/>
+    <appender-ref ref="LOG-FILE-APPENDER"/>
   </root>
 
 </log4j:configuration>

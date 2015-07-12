@@ -63,8 +63,7 @@ public class AdminLobbyServlet extends HttpServlet
                     lockedUsers.add(user);
             }
             session.setAttribute("lockedUsers", lockedUsers);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -73,16 +72,13 @@ public class AdminLobbyServlet extends HttpServlet
     }
 
 
-
-
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
         PrintWriter out = response.getWriter();
         String action = request.getParameter("action");
         System.out.println(action);
 
-        HttpSession session=request.getSession();
+        HttpSession session = request.getSession();
 
         switch (action)
         {
@@ -179,8 +175,7 @@ public class AdminLobbyServlet extends HttpServlet
 
                     request.getRequestDispatcher("/WEB-INF/jsp/admin_lobby.jsp").include(request, response);
 
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -190,7 +185,7 @@ public class AdminLobbyServlet extends HttpServlet
             case "find_user":
             {
                 String phoneNumber = request.getParameter("phoneNumber");
-                List<Contract> contracts = (List<Contract>)session.getAttribute("contracts");
+                List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
 
 
                 for (Contract contract : contracts)
@@ -229,8 +224,7 @@ public class AdminLobbyServlet extends HttpServlet
                 try
                 {
                     tariffs = TariffService.getInstance().getAllTariffs();
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -250,9 +244,9 @@ public class AdminLobbyServlet extends HttpServlet
                 String email = request.getParameter("email");
                 try
                 {
-                    List<User> users = (List<User>)session.getAttribute("users");
-                    List<User> lockedUsers = (List<User>)session.getAttribute("lockedUsers");
-                    User admin = (User)session.getAttribute("user");
+                    List<User> users = (List<User>) session.getAttribute("users");
+                    List<User> lockedUsers = (List<User>) session.getAttribute("lockedUsers");
+                    User admin = (User) session.getAttribute("user");
                     for (User user : users)
                     {
                         if (user.getEmail().equals(email))
@@ -265,8 +259,7 @@ public class AdminLobbyServlet extends HttpServlet
                             lockedUsers.add(user);
                         }
                     }
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -280,8 +273,8 @@ public class AdminLobbyServlet extends HttpServlet
                 String email = request.getParameter("email");
                 try
                 {
-                    List<User> users = (List<User>)session.getAttribute("users");
-                    List<User> lockedUsers = (List<User>)session.getAttribute("lockedUsers");
+                    List<User> users = (List<User>) session.getAttribute("users");
+                    List<User> lockedUsers = (List<User>) session.getAttribute("lockedUsers");
                     for (User user : users)
                     {
                         if (user.getEmail().equals(email))
@@ -294,8 +287,7 @@ public class AdminLobbyServlet extends HttpServlet
                             lockedUsers.remove(user);
                         }
                     }
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -318,7 +310,7 @@ public class AdminLobbyServlet extends HttpServlet
                 String tariffName = request.getParameter("tariff");
                 String phoneNumber = request.getParameter("phoneNumber");
 
-                List<Tariff> tariffs = (List<Tariff>)session.getAttribute("tariffs");
+                List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
                 Tariff newTariff = null;
                 for (Tariff tariff : tariffs)
                 {
@@ -329,7 +321,7 @@ public class AdminLobbyServlet extends HttpServlet
                 }
                 try
                 {
-                    List<Contract> contracts = (List<Contract>)session.getAttribute("contracts");
+                    List<Contract> contracts = (List<Contract>) session.getAttribute("contracts");
                     for (Contract contract : contracts)
                     {
                         if (contract.getPhoneNumber() == Integer.parseInt(phoneNumber))
@@ -339,8 +331,7 @@ public class AdminLobbyServlet extends HttpServlet
                             ContractService.getInstance().saveOrUpdateContract(contract);
                         }
                     }
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -354,8 +345,8 @@ public class AdminLobbyServlet extends HttpServlet
                 String tariffName = request.getParameter("tariffName");
                 String tariffPrice = request.getParameter("tariffPrice");
                 String[] optionNames = request.getParameterValues("options[]");
-                List<Option> options = (List<Option>)session.getAttribute("options");
-                List<Tariff> tariffs = (List<Tariff>)session.getAttribute("tariffs");
+                List<Option> options = (List<Option>) session.getAttribute("options");
+                List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
 
                 Set<Option> tariffOptions = new HashSet<>();
                 for (String optionName : optionNames)
@@ -375,8 +366,7 @@ public class AdminLobbyServlet extends HttpServlet
 
                     tariffs = TariffService.getInstance().getAllTariffs();
                     session.setAttribute("tariffs", tariffs);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -389,8 +379,8 @@ public class AdminLobbyServlet extends HttpServlet
             {
                 String tariffName = request.getParameter("tariffName");
                 String[] optionNames = request.getParameterValues("options[]");
-                List<Option> options = (List<Option>)session.getAttribute("options");
-                List<Tariff> tariffs = (List<Tariff>)session.getAttribute("tariffs");
+                List<Option> options = (List<Option>) session.getAttribute("options");
+                List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
 
                 Set<Option> tariffOptions = new HashSet<>();
                 for (String optionName : optionNames)
@@ -405,7 +395,7 @@ public class AdminLobbyServlet extends HttpServlet
 
                 try
                 {
-                    for (Tariff tariff: tariffs)
+                    for (Tariff tariff : tariffs)
                     {
                         if (tariff.getName().equals(tariffName))
                         {
@@ -414,8 +404,7 @@ public class AdminLobbyServlet extends HttpServlet
                         }
                     }
 
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -427,12 +416,12 @@ public class AdminLobbyServlet extends HttpServlet
             case "delete_tariff":
             {
                 String tariffName = request.getParameter("tariffName");
-                List<Tariff> tariffs = (List<Tariff>)session.getAttribute("tariffs");
+                List<Tariff> tariffs = (List<Tariff>) session.getAttribute("tariffs");
 
                 try
                 {
                     Tariff removedTariff = null;
-                    for (Tariff tariff: tariffs)
+                    for (Tariff tariff : tariffs)
                     {
                         if (tariff.getName().equals(tariffName))
                         {
@@ -444,8 +433,7 @@ public class AdminLobbyServlet extends HttpServlet
 
                     tariffs = TariffService.getInstance().getAllTariffs();
                     session.setAttribute("tariffs", tariffs);
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -458,7 +446,7 @@ public class AdminLobbyServlet extends HttpServlet
             {
                 String optionName = request.getParameter("optionName");
                 String[] optionNames = request.getParameterValues("options[]");
-                List<Option> options = (List<Option>)session.getAttribute("options");
+                List<Option> options = (List<Option>) session.getAttribute("options");
 
                 Set<Option> lockedOptions = new HashSet<>();
                 for (String lockedName : optionNames)
@@ -473,7 +461,7 @@ public class AdminLobbyServlet extends HttpServlet
 
                 try
                 {
-                    for (Option option: options)
+                    for (Option option : options)
                     {
                         if (option.getName().equals(optionName))
                         {
@@ -482,8 +470,7 @@ public class AdminLobbyServlet extends HttpServlet
                         }
                     }
 
-                }
-                catch (Exception e)
+                } catch (Exception e)
                 {
                     e.printStackTrace();
                 }
