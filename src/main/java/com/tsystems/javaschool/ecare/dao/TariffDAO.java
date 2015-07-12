@@ -34,7 +34,7 @@ public class TariffDAO implements IAbstractDAO<Tariff>
     }
 
     @Override
-    public Tariff load(long id) {
+    public Tariff load(int id) {
         return EntityManagerUtil.getEntityManager().find(Tariff.class, id);
     }
 

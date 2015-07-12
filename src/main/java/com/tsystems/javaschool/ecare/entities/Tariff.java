@@ -1,7 +1,9 @@
 package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Kolia on 01.07.2015.
@@ -14,7 +16,7 @@ import java.util.Collection;
                 @NamedQuery (name = "Tariff.deleteAllTariffs", query = "DELETE FROM Tariff"),
                 @NamedQuery (name = "Tariff.size", query="SELECT count(t) FROM Tariff t")
         })
-public class Tariff
+public class Tariff implements Serializable
 {
     @Id
     @Column(name = "tariff_id")
@@ -27,11 +29,11 @@ public class Tariff
     @Column(name = "price")
     private int price;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="available_options",
-            joinColumns=@JoinColumn(name="tariff_id"),
-            inverseJoinColumns=@JoinColumn(name="option_id"))
-    private Collection<Option> availableOptions;
+            joinColumns=@JoinColumn(name="tariff_id", referencedColumnName="tariff_id"),
+            inverseJoinColumns=@JoinColumn(name="option_id", referencedColumnName="option_id"))
+    private Set<Option> availableOptions;
 
     public int getTariffId()
     {
@@ -66,22 +68,23 @@ public class Tariff
     }
 
 
-    public Collection<Option> getAvailableOptions()
+    public Set<Option> getAvailableOptions()
     {
         return availableOptions;
     }
 
-    public void setAvailableOptions(Collection<Option> availableOptions)
+    public void setAvailableOptions(Set<Option> availableOptions)
     {
         this.availableOptions = availableOptions;
     }
 
     public Tariff(){}
 
-    public Tariff(String name, int price)
+    public Tariff(String name, int price, Set<Option> availableOptions)
     {
         this.name = name;
         this.price = price;
+        this.availableOptions = availableOptions;
     }
 
     @Override

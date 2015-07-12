@@ -35,7 +35,7 @@ public class ContractDAO implements IAbstractDAO<Contract>
     }
 
     @Override
-    public Contract load(long id) {
+    public Contract load(int id) {
         return EntityManagerUtil.getEntityManager().find(Contract.class, id);
     }
 

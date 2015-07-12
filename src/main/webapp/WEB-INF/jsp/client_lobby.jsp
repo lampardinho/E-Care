@@ -4,6 +4,7 @@
 <%@ page import="com.tsystems.javaschool.ecare.entities.Contract" %>
 <%@ page import="com.tsystems.javaschool.ecare.services.ContractService" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.tsystems.javaschool.ecare.entities.Tariff" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%--
   User: Kolia
@@ -19,7 +20,7 @@
 		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="icon" href="img/favicon.ico">
+		<link rel="icon" href="../../img/favicon.ico">
 
 		<title>Client lobby</title>
 
@@ -29,6 +30,13 @@
 		<!-- Custom styles for this template -->
 		<link href="/css/ecare.css" rel="stylesheet">
 
+		<link href="/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="/css/bootstrap-select.min.css">
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<script src="/js/bootstrap-dialog.min.js"></script>
+		<script src="/js/bootstrap-select.min.js"></script>
 
 	</head>
 
@@ -63,8 +71,17 @@
 											<li><a href="#" class="contracts">${contract.phoneNumber}</a></li>
 										</c:forEach>
 									</ul>
+
 								</li>
+									<%--<select class="selectpicker" id="contractSelect">
+										<c:forEach var="contract" items="${contracts}">
+											<option>${contract.phoneNumber}</option>
+										</c:forEach>
+										&lt;%&ndash;<option>Ketchup</option>
+										<option>Relish</option>&ndash;%&gt;
+									</select>--%>
 							</ul>
+
 						</div>
 
 
@@ -81,10 +98,15 @@
 			<!-- Main component for a primary marketing message or call to action -->
 			<div id="content" class="jumbotron">
 
+
+
+
 				<%
 					user = (User)session.getAttribute("user");
 					contracts = (List<Contract>)session.getAttribute("contracts");
 					currentContract = (Contract) session.getAttribute("currentContract");
+					List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
+
 
 				%>
 
@@ -101,18 +123,26 @@
 						</p>
 						<p class="text-right">
 
-							<button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#myModal">
+							<button class="btn btn-primary btn-lg" type="button" data-toggle="modal" data-target="#cart">
 								<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-								<span class="badge">4</span>
+								<span class="badge"><%= actionsHistory.size() %></span>
 							</button>
 
-							<button type="button" class="btn btn-danger btn-lg">
-								<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>Block contract
-							</button>
+							<c:choose>
+								<c:when test="${currentContract.lockedByUsers.contains(user)}">
+									<button type="button" class="btn btn-success btn-lg" id="blockButton">Unlock contract</button>
+								</c:when>
+								<c:when test="${!currentContract.lockedByUsers.isEmpty()}">
+									<button type="button" class="btn btn-danger btn-lg" id="blockButton">Locked by admin</button>
+								</c:when>
+								<c:otherwise>
+									<button type="button" class="btn btn-danger btn-lg" id="blockButton">Lock contract</button>
+								</c:otherwise>
+							</c:choose>
 
 
 							<!-- Modal -->
-						<div class="modal fade" id="myModal" role="dialog">
+						<div class="modal fade" id="cart" role="dialog">
 							<div class="modal-dialog">
 
 								<!-- Modal content-->
@@ -122,16 +152,15 @@
 										<h4 class="modal-title">Actions history</h4>
 									</div>
 									<div class="modal-body">
-										<c:forEach var="tariff" items="${tariffs}">
+										<c:forEach var="action" items="${actionsHistory}">
 											<a href="#" class="list-group-item">
-												<p   class="list-group-item-text">${tariff.name}</p>
-												<p   class="list-group-item-text">Price: ${tariff.price}</p>
+												<label class="list-group-item-text">${action}</label>
 											</a>
 										</c:forEach>
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-success">Apply</button>
-										<button type="button" class="btn btn-warning">Cancel</button>
+										<button id="apply" type="button" class="btn btn-success">Apply</button>
+										<button id="discard" type="button" class="btn btn-warning">Discard</button>
 										<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 									</div>
 								</div>
@@ -161,7 +190,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="option" items="${options}">
+								<c:forEach var="option" items="${options}" varStatus="myIndex">
 									<c:choose>
 										<c:when test="${currentContract.selectedOptions.contains(option)}">
 											<tr class="success">
@@ -169,14 +198,17 @@
 										<c:when test="${disabledOptions.contains(option)}">
 											<tr class="danger">
 										</c:when>
+										<c:when test="${balance < option.connectionPrice}">
+											<tr class="no-money">
+										</c:when>
 										<c:otherwise>
 											<tr>
 										</c:otherwise>
 									</c:choose>
-										<th scope="row">1</th>
-										<td>${option.name}</td>
-										<td>${option.connectionPrice}</td>
-										<td>${option.monthlyPrice}</td>
+										<th scope="row">${myIndex.index+1}</th>
+										<td class="option-name">${option.name}</td>
+										<td class="option-connectionPrice">${option.connectionPrice}</td>
+										<td class="option-monthlyPrice">${option.monthlyPrice}</td>
 									</tr>
 								</c:forEach>
 							</tbody>
@@ -184,10 +216,6 @@
 					</div>
 				</div>
 
-				<div class="alert alert-warning alert-dismissible" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<strong>Warning!</strong> Better check yourself, you're not looking too good.
-				</div>
 
 
 				<div id="tariffs" class="panel panel-info">
@@ -205,18 +233,21 @@
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="tariff" items="${tariffs}">
+								<c:forEach var="tariff" items="${tariffs}" varStatus="myIndex">
 									<c:choose>
 										<c:when test="${tariff == currentTariff}">
 											<tr class="success">
+										</c:when>
+										<c:when test="${balance < tariff.price}">
+											<tr class="no-money">
 										</c:when>
 										<c:otherwise>
 											<tr>
 										</c:otherwise>
 									</c:choose>
-										<th scope="row">1</th>
-										<td>${tariff.name}</td>
-										<td>${tariff.price}</td>
+										<th scope="row">${myIndex.index+1}</th>
+										<td class="tariff-name">${tariff.name}</td>
+										<td class="tariff-price">${tariff.price}</td>
 									</tr>
 								</c:forEach>
 							</tbody>
@@ -224,17 +255,18 @@
 					</div>
 				</div>
 
+				<div id="myScripts">
+					<script src="/js/client-lobby.js"></script>
+
+				</div>
+
+
 			</div>
 
 		</div> <!-- /container -->
 
 
-		<!-- Bootstrap core JavaScript
-		================================================== -->
-		<!-- Placed at the end of the document so the pages load faster -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="/js/ecare.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 	</body>
 </html>

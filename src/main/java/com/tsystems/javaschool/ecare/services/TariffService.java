@@ -3,6 +3,7 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.dao.TariffDAO;
 import com.tsystems.javaschool.ecare.entities.Tariff;
+import com.tsystems.javaschool.ecare.util.ECareException;
 import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
@@ -56,18 +57,18 @@ public class TariffService
      *
      * @param tr tariff entity to be saved or updated.
      * @return saved or updated tariff entity.
-     * @throws Exception if an error occurred during saving or updating of entity
+     * @throws ECareException if an error occurred during saving or updating of entity
      * and DAO returns null.
      */
-    public Tariff saveOrUpdateTariff(Tariff tr) throws Exception {
+    public Tariff saveOrUpdateTariff(Tariff tr) throws ECareException {
         logger.info("Save/update tariff " + tr + " in DB.");
         try {
             EntityManagerUtil.beginTransaction();
             Tariff tariff = trDAO.saveOrUpdate(tr);
             EntityManagerUtil.commit();
-            //If DAO returns null method will throws an Exception.
+            //If DAO returns null method will throws an ECareException.
             if(tariff == null) {
-                Exception ecx = new Exception("Failed to save/update tariff " + tr + " in DB.");
+                ECareException ecx = new ECareException("Failed to save/update tariff " + tr + " in DB.");
                 logger.error(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -80,6 +81,10 @@ public class TariffService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
@@ -87,18 +92,18 @@ public class TariffService
      *
      * @param id tariff id for search that tariff in the database.
      * @return loaded tariff entity.
-     * @throws Exception if an error occurred during loading of entity
+     * @throws ECareException if an error occurred during loading of entity
      * and DAO returns null.
      */
-    public Tariff loadTariff(long id) throws Exception {
+    public Tariff loadTariff(int id) throws ECareException {
         logger.info("Load tariff with id: " + id + " from DB.");
         try {
             EntityManagerUtil.beginTransaction();
             Tariff tr = trDAO.load(id);
             EntityManagerUtil.commit();
-            //If DAO returns null method will throws an Exception.
+            //If DAO returns null method will throws an ECareException.
             if(tr == null) {
-                Exception ecx = new Exception("Tariff with id = " + id + " not found.");
+                ECareException ecx = new ECareException("Tariff with id = " + id + " not found.");
                 logger.warn(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -111,23 +116,28 @@ public class TariffService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
      * This method implements deleting of tariff from the database.
      *
      * @param id tariff id for deleting that tariff from the database.
-     * @throws Exception if an error occurred during intermediate loading
+     * @throws ECareException if an error occurred during intermediate loading
      * of entity and DAO returns null.
      */
-    public void deleteTariff(long id) throws Exception {
+    public void deleteTariff(int id) throws ECareException
+    {
         logger.info("Delete tariff with id: " + id + " from DB.");
         try {
             EntityManagerUtil.beginTransaction();
             Tariff tr = trDAO.load(id);
-            //If DAO returns null method will throws an Exception.
+            //If DAO returns null method will throws an ECareException.
             if(tr == null) {
-                Exception ecx = new Exception("Tariff with id = " + id + " not exist.");
+                ECareException ecx = new ECareException("Tariff with id = " + id + " not exist.");
                 logger.warn(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -141,6 +151,10 @@ public class TariffService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
@@ -148,16 +162,16 @@ public class TariffService
      *
      * @return list of received tariffs.
      */
-    public List<Tariff> getAllTariffs() throws Exception
+    public List<Tariff> getAllTariffs() throws ECareException
     {
         logger.info("Get all tariffs from DB.");
         try {
             EntityManagerUtil.beginTransaction();
             List<Tariff> tariffs = trDAO.getAll();
             EntityManagerUtil.commit();
-            //If DAO returns null method will throws an Exception.
+            //If DAO returns null method will throws an ECareException.
             if(tariffs == null) {
-                Exception ecx = new Exception("Failed to get all tariffs from DB.");
+                ECareException ecx = new ECareException("Failed to get all tariffs from DB.");
                 logger.warn(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -169,6 +183,10 @@ public class TariffService
             if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
+        }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 
@@ -187,6 +205,10 @@ public class TariffService
             if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
+        }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 
@@ -208,6 +230,10 @@ public class TariffService
             if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
+        }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 }

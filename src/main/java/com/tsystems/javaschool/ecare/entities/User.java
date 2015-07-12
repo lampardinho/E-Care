@@ -1,8 +1,11 @@
 package com.tsystems.javaschool.ecare.entities;
 
+import javax.jws.soap.SOAPBinding;
 import javax.persistence.*;
-import java.sql.Date;
+import java.io.Serializable;
+import java.util.Date;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Created by Kolia on 27.06.2015.
@@ -11,14 +14,14 @@ import java.util.Collection;
 @Table(name = "users", schema = "", catalog = "ecare")
 @NamedQueries(
         {
-                @NamedQuery (name = "User.getAllUsers", query = "SELECT c FROM User c WHERE c.isAdmin = 0"),
+                @NamedQuery (name = "User.getAllUsers", query = "SELECT c FROM User c"),
                 @NamedQuery (name = "User.findUserByLoginAndPassword", query = "SELECT c FROM User c WHERE c.email = :login AND c.password = :password"),
                 @NamedQuery (name = "User.findUserByPhoneNumber", query = "SELECT cn.user FROM Contract cn WHERE cn.phoneNumber = :number"),
                 @NamedQuery (name = "Client.findClientByLogin", query = "SELECT c FROM User c WHERE c.email = :login"),
                 @NamedQuery (name = "Client.deleteAllClients", query = "DELETE FROM User WHERE isAdmin = 0"),
                 @NamedQuery (name = "Client.size", query="SELECT count(c) FROM User c WHERE c.isAdmin = 0")
         })
-public class User
+public class User implements Serializable
 {
     @Id
     @Column(name = "user_id")
@@ -49,11 +52,11 @@ public class User
     @Column(name = "is_admin")
     private byte isAdmin;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="contract_locking",
             joinColumns=@JoinColumn(name="locker_id"),
             inverseJoinColumns=@JoinColumn(name="contract_id"))
-    private Collection<Contract> lockedContracts;
+    private Set<Contract> lockedContracts;
 
     public int getUserId()
     {
@@ -153,14 +156,30 @@ public class User
         this.isAdmin = (isAdmin) ? (byte)1 : 0;
     }
 
-    public Collection<Contract> getLockedContracts()
+    public Set<Contract> getLockedContracts()
     {
         return lockedContracts;
     }
 
-    public void setLockedContracts(Collection<Contract> lockedContracts)
+    public void setLockedContracts(Set<Contract> lockedContracts)
     {
         this.lockedContracts = lockedContracts;
+    }
+
+    public User(){}
+
+    public User(String name, String surname, Date birthDate,
+                String passportData, String address, String email,
+                String password, byte isAdmin)
+    {
+        this.name = name;
+        this.surname = surname;
+        this.birthDate = birthDate;
+        this.passportData = passportData;
+        this.address = address;
+        this.email = email;
+        this.password = password;
+        this.isAdmin = isAdmin;
     }
 
     @Override

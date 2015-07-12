@@ -34,7 +34,7 @@ public class UserDAO implements IAbstractDAO<User>
     }
 
     @Override
-    public User load(long id) {
+    public User load(int id) {
         return EntityManagerUtil.getEntityManager().find(User.class, id);
     }
 

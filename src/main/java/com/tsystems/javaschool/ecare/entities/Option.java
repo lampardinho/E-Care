@@ -1,7 +1,9 @@
 package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Created by Kolia on 01.07.2015.
@@ -17,7 +19,7 @@ import java.util.Collection;
                 @NamedQuery (name = "Option.deleteAllOptionsForTariff", query = "DELETE FROM Option"),
                 @NamedQuery (name = "Option.size", query="SELECT count(o) FROM Option o")
         })
-public class Option
+public class Option implements Serializable
 {
     @Id
     @Column(name = "option_id")
@@ -33,17 +35,11 @@ public class Option
     @Column(name = "monthly_price")
     private int monthlyPrice;
 
-    @ManyToMany
-    @JoinTable(name="available_options",
-            joinColumns=@JoinColumn(name="option_id"),
-            inverseJoinColumns=@JoinColumn(name="tariff_id"))
-    private Collection<Tariff> availableTariffs;
-
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="option_locking",
             joinColumns=@JoinColumn(name="selected_option_id"),
             inverseJoinColumns=@JoinColumn(name="locked_option_id"))
-    private Collection<Option> lockedOptions;
+    private Set<Option> lockedOptions;
 
 
     public int getOptionId()
@@ -89,22 +85,12 @@ public class Option
         this.monthlyPrice = monthlyPrice;
     }
 
-    public Collection<Tariff> getAvailableTariffs()
-    {
-        return availableTariffs;
-    }
-
-    public void setAvailableTariffs(Collection<Tariff> availableTariffs)
-    {
-        this.availableTariffs = availableTariffs;
-    }
-
-    public Collection<Option> getLockedOptions()
+    public Set<Option> getLockedOptions()
     {
         return lockedOptions;
     }
 
-    public void setLockedOptions(Collection<Option> lockedOptions)
+    public void setLockedOptions(Set<Option> lockedOptions)
     {
         this.lockedOptions = lockedOptions;
     }
@@ -143,6 +129,7 @@ public class Option
         result = 31 * result + monthlyPrice;
         return result;
     }
+
 
 
 }

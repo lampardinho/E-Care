@@ -3,6 +3,7 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.dao.UserDAO;
 import com.tsystems.javaschool.ecare.entities.User;
+import com.tsystems.javaschool.ecare.util.ECareException;
 import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
@@ -55,19 +56,19 @@ public class UserService
      *
      * @param cl client entity to be saved or updated.
      * @return saved or updated client entity.
-     * @throws Exception if an error occurred during saving or updating of entity
+     * @throws ECareException if an error occurred during saving or updating of entity
      * and DAO returns null.
      */
-    public User saveOrUpdateClient(User cl) throws Exception {
+    public User saveOrUpdateClient(User cl) throws ECareException {
         logger.info("Save/update client " + cl + " in DB.");
 
         try {
             EntityManagerUtil.beginTransaction();
             User client = DAO.saveOrUpdate(cl);
             EntityManagerUtil.commit();
-            //If DAO returns null method will throws an Exception
+            //If DAO returns null method will throws an ECareException
             if(client == null) {
-                Exception ecx = new Exception("Failed to save/update client " + cl + " in DB.");
+                ECareException ecx = new ECareException("Failed to save/update client " + cl + " in DB.");
                 logger.error(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -80,10 +81,10 @@ public class UserService
                 EntityManagerUtil.rollback();
             throw re;
         }
-        /*finally
+        finally
         {
             EntityManagerUtil.closeEntityManager();
-        }*/
+        }
     }
 
     /**
@@ -91,19 +92,19 @@ public class UserService
      *
      * @param id client id for search that client in the database.
      * @return loaded client entity.
-     * @throws Exception if an error occurred during loading of entity
+     * @throws ECareException if an error occurred during loading of entity
      * and DAO returns null.
      */
-    public User loadClient(long id) throws Exception {
+    public User loadClient(int id) throws ECareException {
         logger.info("Load client with id: " + id + " from DB.");
         
         try {
             EntityManagerUtil.beginTransaction();
             User cl = DAO.load(id);
             EntityManagerUtil.commit();
-            //If DAO returns null method will throws an Exception
+            //If DAO returns null method will throws an ECareException
             if(cl == null) {
-                Exception ecx = new Exception("Client with id = " + id + " not found in DB.");
+                ECareException ecx = new ECareException("Client with id = " + id + " not found in DB.");
                 logger.warn(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -116,10 +117,10 @@ public class UserService
                 EntityManagerUtil.rollback();
             throw re;
         }
-        /*finally
+        finally
         {
             EntityManagerUtil.closeEntityManager();
-        }*/
+        }
     }
 
     /**
@@ -129,10 +130,10 @@ public class UserService
      * @param login client login for search that client in the database.
      * @param password client password for search that client in the database.
      * @return found client entity.
-     * @throws Exception if DAO returns NoResultException during finding of client
+     * @throws ECareException if DAO returns NoResultException during finding of client
      * in the database.
      */
-    public User findClient(String login, String password) throws Exception {
+    public User findClient(String login, String password) throws ECareException {
         logger.info("Find client with login: " + login + " and password:" + password + " in DB.");
         User cl = null;
         
@@ -142,9 +143,9 @@ public class UserService
                 // Searching of client in the database by DAO method.
                 cl = userDAO.findUserByLoginAndPassword(login, password);
                 // If client does not exist in database, block try catches the NoResultException and
-                // throws an Exception.
+                // throws an ECareException.
             } catch(NoResultException nrx) {
-                Exception ecx = new Exception("Incorrect login/password or client does not exist.", nrx);
+                ECareException ecx = new ECareException("Incorrect login/password or client does not exist.", nrx);
                 logger.warn(ecx.getMessage(), nrx);
                 throw ecx;
             }
@@ -157,10 +158,10 @@ public class UserService
                 EntityManagerUtil.rollback();
             throw re;
         }
-        /*finally
+        finally
         {
             EntityManagerUtil.closeEntityManager();
-        }*/
+        }
     }
 
     /**
@@ -168,10 +169,10 @@ public class UserService
      *
      * @param number telephone number of client for search that client in the database.
      * @return found client entity.
-     * @throws Exception if DAO returns NoResultException during finding of client
+     * @throws ECareException if DAO returns NoResultException during finding of client
      * in the database.
      */
-    public User findClientByNumber(long number) throws Exception {
+    public User findClientByNumber(long number) throws ECareException {
         logger.info("Find client with telephone number: " + number + " in DB.");
         User cl = null;
         try {
@@ -180,9 +181,9 @@ public class UserService
                 // Search of client in the database by DAO method.
                 cl = userDAO.findUserByNumber(number);
                 // If client does not exist in database, block try catches the NoResultException and
-                // throws an Exception.
+                // throws an ECareException.
             } catch(NoResultException nrx) {
-                Exception ecx = new Exception("Client with number: " + number + " not found.", nrx);
+                ECareException ecx = new ECareException("Client with number: " + number + " not found.", nrx);
                 logger.warn(ecx.getMessage(), nrx);
                 throw ecx;
             }
@@ -195,23 +196,28 @@ public class UserService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
      * Method implements deleting of clients from the database.
      *
      * @param id client id for deleting that client from the database.
-     * @throws Exception if an error occurred during intermediate loading
+     * @throws ECareException if an error occurred during intermediate loading
      * of entity and DAO returns null.
      */
-    public void deleteClient(long id) throws Exception {
+    public void deleteClient(int id) throws ECareException
+    {
         logger.info("Delete client with id: " + id + " from DB.");
         try {
             EntityManagerUtil.beginTransaction();
             User cl = DAO.load(id);
-            //If DAO returns null method will throws an Exception.
+            //If DAO returns null method will throws an ECareException.
             if(cl == null) {
-                Exception ecx = new Exception("Client with id = " + id + " not exist.");
+                ECareException ecx = new ECareException("Client with id = " + id + " not exist.");
                 logger.warn(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -225,24 +231,28 @@ public class UserService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
      * Method implements receiving of all clients from the database.
      *
      * @return list of received clients.
-     * @throws Exception if an error occurred during receiving of entities
+     * @throws ECareException if an error occurred during receiving of entities
      * and DAO returns null.
      */
-    public List<User> getAllClients() throws Exception {
+    public List<User> getAllClients() throws ECareException {
         logger.info("Get all clients from DB.");
         try {
             EntityManagerUtil.beginTransaction();
             List<User> clients = DAO.getAll();
             EntityManagerUtil.commit();
-            //If DAO returns null method will throws an Exception.
+            //If DAO returns null method will throws an ECareException.
             if(clients == null) {
-                Exception ecx = new Exception("Failed to get all clients from DB.");
+                ECareException ecx = new ECareException("Failed to get all clients from DB.");
                 logger.error(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -254,6 +264,10 @@ public class UserService
             if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
+        }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 
@@ -272,6 +286,10 @@ public class UserService
             if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
+        }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 
@@ -293,6 +311,10 @@ public class UserService
             if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
+        }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 
@@ -326,6 +348,10 @@ public class UserService
             if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
+        }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 }

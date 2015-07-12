@@ -1,7 +1,11 @@
 package com.tsystems.javaschool.ecare.entities;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Created by Kolia on 01.07.2015.
@@ -17,7 +21,7 @@ import java.util.Collection;
                 @NamedQuery (name = "Contract.deleteAllContractsForClient", query = "DELETE FROM Contract WHERE user.id = ?1"),
                 @NamedQuery (name = "Contract.size", query="SELECT count(c) FROM Contract c")
         })
-public class Contract
+public class Contract implements Serializable
 {
     @Id
     @Column(name = "contract_id")
@@ -38,17 +42,17 @@ public class Contract
     @Column(name = "ballance")
     private int balance;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="contract_locking",
             joinColumns=@JoinColumn(name="contract_id"),
             inverseJoinColumns=@JoinColumn(name="locker_id"))
-    private Collection<User> lockedByUsers;
+    private Set<User> lockedByUsers;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="selected_options",
             joinColumns=@JoinColumn(name="contract_id"),
             inverseJoinColumns=@JoinColumn(name="option_id"))
-    private Collection<Option> selectedOptions;
+    private Set<Option> selectedOptions;
 
     public int getContractId()
     {
@@ -92,31 +96,36 @@ public class Contract
         this.phoneNumber = phoneNumber;
     }
 
-    public Collection<User> getLockedByUsers()
+    public Set<User> getLockedByUsers()
     {
         return lockedByUsers;
     }
 
-    public void setLockedByUsers(Collection<User> lockedByUsers)
+    public void setLockedByUsers(Set<User> lockedByUsers)
     {
         this.lockedByUsers = lockedByUsers;
     }
 
-    public Collection<Option> getSelectedOptions()
+    public Set<Option> getSelectedOptions()
     {
         return selectedOptions;
     }
 
-    public void setSelectedOptions(Collection<Option> selectedOptions)
+    public void setSelectedOptions(Set<Option> selectedOptions)
     {
         this.selectedOptions = selectedOptions;
     }
 
     public Contract(){}
 
-    public Contract(int phoneNumber)
+    public Contract(User user, Tariff tariff, int phoneNumber, int balance)
     {
+        this.user = user;
+        this.tariff = tariff;
         this.phoneNumber = phoneNumber;
+        this.balance = balance;
+        this.lockedByUsers = new HashSet<>();
+        this.selectedOptions = new HashSet<>();
     }
 
     @Override

@@ -35,7 +35,7 @@ public class OptionDAO implements IAbstractDAO<Option>
     }
 
     @Override
-    public Option load(long id) {
+    public Option load(int id) {
         return EntityManagerUtil.getEntityManager().find(Option.class, id);
     }
 

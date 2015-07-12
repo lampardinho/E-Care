@@ -3,6 +3,7 @@ package com.tsystems.javaschool.ecare.services;
 import com.tsystems.javaschool.ecare.dao.IAbstractDAO;
 import com.tsystems.javaschool.ecare.dao.OptionDAO;
 import com.tsystems.javaschool.ecare.entities.Option;
+import com.tsystems.javaschool.ecare.util.ECareException;
 import com.tsystems.javaschool.ecare.util.EntityManagerUtil;
 import org.apache.log4j.Logger;
 
@@ -57,18 +58,18 @@ public class OptionService
      *
      * @param op option entity to be saved or updated.
      * @return saved or updated option entity.
-     * @throws Exception if an error occurred during saving or updating of entity
+     * @throws ECareException if an error occurred during saving or updating of entity
      * and DAO returns null.
      */
-    public Option saveOrUpdateOption(Option op) throws Exception {
+    public Option saveOrUpdateOption(Option op) throws ECareException {
         logger.info("Save/update option " + op + " in DB.");
         try {
             EntityManagerUtil.beginTransaction();
             Option option = DAO.saveOrUpdate(op);
             EntityManagerUtil.commit();
-            //If DAO returns null method will throws an Exception
+            //If DAO returns null method will throws an ECareException
             if(option == null) {
-                Exception ecx = new Exception("Failed to save/update option " + op + " in DB.");
+                ECareException ecx = new ECareException("Failed to save/update option " + op + " in DB.");
                 logger.error(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -81,6 +82,10 @@ public class OptionService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
@@ -88,18 +93,19 @@ public class OptionService
      *
      * @param id option id for search that option in the database.
      * @return loaded option entity.
-     * @throws Exception if an error occurred during loading of entity
+     * @throws ECareException if an error occurred during loading of entity
      * and DAO returns null.
      */
-    public Option loadOption(long id) throws Exception {
+    public Option loadOption(int id) throws ECareException
+    {
         logger.info("Load option with id: " + id + " from DB.");
         try {
             EntityManagerUtil.beginTransaction();
             Option op = DAO.load(id);
             EntityManagerUtil.commit();
-            //If DAO returns null method will throws an Exception
+            //If DAO returns null method will throws an ECareException
             if(op == null) {
-                Exception ecx = new Exception("Option with id = " + id + " not found in DB.");
+                ECareException ecx = new ECareException("Option with id = " + id + " not found in DB.");
                 logger.warn(String.valueOf(ecx), ecx);
                 throw ecx;
             }
@@ -112,23 +118,27 @@ public class OptionService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
      * This method implements deleting of option from the database.
      *
      * @param id option id for deleting that option from the database.
-     * @throws Exception if an error occurred during intermediate loading
+     * @throws ECareException if an error occurred during intermediate loading
      * of entity and DAO returns null.
      */
-    public void deleteOption(long id) throws Exception {
+    public void deleteOption(int id) throws ECareException {
         logger.info("Delete option with id: " + id + " from DB.");
         try {
             EntityManagerUtil.beginTransaction();
             Option op = DAO.load(id);
-            //If DAO returns null method will throws an Exception
+            //If DAO returns null method will throws an ECareException
             if(op == null) {
-                Exception ecx = new Exception("Option with id = " + id + " not exist.");
+                ECareException ecx = new ECareException("Option with id = " + id + " not exist.");
                 logger.warn(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -142,24 +152,28 @@ public class OptionService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
      * This method implements receiving of all options from the database.
      *
      * @return list of received options.
-     * @throws Exception if an error occurred during receiving of entities
+     * @throws ECareException if an error occurred during receiving of entities
      * and DAO returns null.
      */
-    public List<Option> getAllOptions() throws Exception {
+    public List<Option> getAllOptions() throws ECareException {
         logger.info("Get all options from DB.");
         try {
             EntityManagerUtil.beginTransaction();
             List<Option> options = DAO.getAll();
             EntityManagerUtil.commit();
-            //If DAO returns null method will throws an Exception
+            //If DAO returns null method will throws an ECareException
             if(options == null) {
-                Exception ecx = new Exception("Failed to get all options from DB.");
+                ECareException ecx = new ECareException("Failed to get all options from DB.");
                 logger.error(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -172,6 +186,10 @@ public class OptionService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
@@ -179,18 +197,18 @@ public class OptionService
      *
      * @param id contract id for searching of all options for this contract.
      * @return list of received options.
-     * @throws Exception if an error occurred during receiving of entities
+     * @throws ECareException if an error occurred during receiving of entities
      * and DAO returns null.
      */
-    public List<Option> getAllOptionsForTariff(long id) throws Exception{
+    public List<Option> getAllOptionsForTariff(long id) throws ECareException{
         logger.info("Get all options from DB for tariff with id: " + id + ".");
         try {
             EntityManagerUtil.beginTransaction();
             List<Option> options = opDAO.getAllOptionsForTariff(id);
             EntityManagerUtil.commit();
-            //If DAO returns null method will throws an Exception
+            //If DAO returns null method will throws an ECareException
             if(options == null) {
-                Exception ecx = new Exception("Failed to get all options from DB for tariff id: " + id + ".");
+                ECareException ecx = new ECareException("Failed to get all options from DB for tariff id: " + id + ".");
                 logger.error(ecx.getMessage(), ecx);
                 throw ecx;
             }
@@ -202,6 +220,10 @@ public class OptionService
             if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
+        }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 
@@ -223,6 +245,10 @@ public class OptionService
                 EntityManagerUtil.rollback();
             throw re;
         }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
@@ -243,6 +269,10 @@ public class OptionService
             if ( EntityManagerUtil.getEntityManager() != null && EntityManagerUtil.getEntityManager().isOpen())
                 EntityManagerUtil.rollback();
             throw re;
+        }
+        finally
+        {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 
