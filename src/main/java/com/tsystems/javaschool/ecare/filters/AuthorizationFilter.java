@@ -30,11 +30,11 @@ public class AuthorizationFilter implements Filter
         if (currentUser == null)
         {
             httpRes.sendRedirect("login.jsp");
-            System.out.println("redirect");
+            //System.out.println("redirect");
         } else
         {
             chain.doFilter(request, response);
-            System.out.println("filter");
+            //System.out.println("filter");
         }
     }
 

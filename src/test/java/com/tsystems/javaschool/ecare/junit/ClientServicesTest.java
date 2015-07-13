@@ -1,4 +1,4 @@
-package com.tsystems.javaschool.ecare;
+package com.tsystems.javaschool.ecare.junit;
 
 import com.tsystems.javaschool.ecare.entities.Contract;
 import com.tsystems.javaschool.ecare.entities.Option;

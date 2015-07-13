@@ -23,7 +23,7 @@ public class LobbyServlet extends HttpServlet
         PrintWriter out = response.getWriter();
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        String isAdmin = request.getParameter("isAdmin");
+        //String isAdmin = request.getParameter("isAdmin");
         //out.println(isAdmin);
 
         UserService userService = UserService.getInstance();
@@ -35,7 +35,7 @@ public class LobbyServlet extends HttpServlet
             session.setAttribute("user", user);
 
 
-            if (isAdmin != null)
+            if (user.getIsAdmin())
             {
                 request.getRequestDispatcher("admin_lobby").include(request, response);
             } else
@@ -45,6 +45,7 @@ public class LobbyServlet extends HttpServlet
         } catch (Exception e)
         {
             e.printStackTrace();
+            response.sendRedirect("login.jsp");
         }
 
     }

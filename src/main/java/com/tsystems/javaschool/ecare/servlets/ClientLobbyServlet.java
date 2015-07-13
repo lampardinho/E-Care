@@ -184,16 +184,16 @@ public class ClientLobbyServlet extends HttpServlet
                 List<String> actionsHistory = (List<String>) session.getAttribute("actionsHistory");
 
                 Set<Option> selectedOptions = contract.getSelectedOptions();
-                System.out.println(selectedOptions.size());
+                //System.out.println(selectedOptions.size());
 
                 for (Option option : contract.getSelectedOptions())
                 {
                     if (option.getName().equals(optionName))
                     {
-                        System.out.println(contract.getSelectedOptions().size());
+                        //System.out.println(contract.getSelectedOptions().size());
                         selectedOptions.remove(option);
                         actionsHistory.add("Disable option " + optionName);
-                        System.out.println(contract.getSelectedOptions().size());
+                        //System.out.println(contract.getSelectedOptions().size());
                         break;
                     }
                 }
